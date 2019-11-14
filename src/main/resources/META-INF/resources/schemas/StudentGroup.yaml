@@ -1,0 +1,129 @@
+StudentGroupFragment:
+  type: object
+  title: StudentGroup
+  description: >
+    StudentGroup kan innehålla elever eller bara vara en tom "platshållare" utan
+    medlemmar, som kan populeras vid ett senare tillfälle. Notera att gruppens
+    koppling till ämnen/kurser och lärare görs via Aktivitet. Grupper har olika
+    egenskaper baserat på grupptyp. Individer kan ha olika roller
+    i relation till en viss grupp. Grupper har specifika egenskaper.
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Identifierare för elevgruppen
+    displayName:
+      description: Gruppens benämning.
+      type: string
+    startDate:
+      type: string
+      format: date
+      description: >
+        Startdatum för gruppens giltighetstid
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    endDate:
+      type: string
+      format: date
+      description: >
+        Slutdatum för gruppens giltighetstid
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    studentGroupType:
+      $ref: "/schemas/common.yaml#/components/schemas/StudentGroupTypesEnum"
+
+    schoolType:
+      allOf:
+        - description: >
+            Beskriver vilken skolform gruppen är tänkt att användas för.
+            Denna information är mest relevant för planering och schemaläggning,
+            innan gruppen populeras med elever, eftersom  elevens inskrivning är
+            ger mer specifik information.
+        - $ref: "/schemas/common.yaml#/components/schemas/SchoolTypesEnum"
+
+    schoolUnit:
+      allOf:
+        - $ref: "/schemas/common.yaml#/SchoolUnitReference"
+        - description: Den skolenhet som aktiviteten är knuten till.
+
+  required:
+    - id
+    - displayName
+    - studentGroupType
+    - startDate
+    - schoolUnit
+
+StudentGroup:
+  allOf:
+    - $ref: "#/StudentGroupFragment"
+    - type: object
+      properties:
+        meta:
+          $ref: "/schemas/common.yaml#/Meta"
+        studentMemberships:
+          description: >
+            Studentmedlemskap anger att en student är medlem i en grupp
+            och vilken tidsperiod medlemskapet omfattar.
+          type: array
+          items:
+            type: object
+            title: StudentMembership
+            properties:
+              person:
+                $ref: "/schemas/common.yaml#/PersonReference"
+              startDate:
+                description: >
+                  Startdatum för elevens medlemskap i gruppen
+                  (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+                type: string
+                format: date
+              endDate:
+                description: >
+                  Slutdatum för elevens medlemskap i gruppen
+                  (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+                type: string
+                format: date
+        _embedded:
+          type: object
+          properties:
+            assignmentRoles:
+              type: array
+              items:
+                type: object
+                allOf:
+                  - $ref: "/schemas/Duty.yaml#/DutyFragment"
+                  - type: object
+                    properties:
+                      assignmentRoleType:
+                        $ref: "/schemas/common.yaml#/components/schemas/AssignmentRoleTypeEnum"
+                      startDate:
+                        description: >
+                          Startdatum för tjänstens relation till gruppen
+                          (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+                        type: string
+                        format: date
+                      endDate:
+                        description: >
+                          Slutdatum för tjänstens relation till gruppen
+                          (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+                        type: string
+                        format: date
+
+StudentGroupsArray:
+  type: array
+  items:
+    $ref: "#/StudentGroup"
+
+StudentGroups:
+  type: object
+  properties:
+    data:
+      type: array
+      items:
+        $ref: "#/StudentGroup"
+    pageToken:
+      type: string
+      nullable: true
+      description: >
+        Om värdet är null finns inget mer att hämta på det token
+        som skickades in som query parameter.
+  required:
+    - data

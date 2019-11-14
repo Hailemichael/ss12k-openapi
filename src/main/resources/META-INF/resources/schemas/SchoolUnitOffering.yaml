@@ -1,0 +1,62 @@
+SchoolUnitOffering:
+  type: object
+  title: SchoolUnitOffering
+  description: >
+    Används för att beskriva vilka program, ämnen och kurser en skolenhet erbjuder
+    under ett visst tidsintervall.
+  properties:
+    startDate:
+      type: string
+      format: date
+      description: >
+        Startdatum för när uppsättningen av program/kurser erbjuds vid skolan.
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    endDate:
+      type: string
+      format: date
+      description: >
+        Slutdatum för när uppsättningen av program/kurser erbjuds vid skolan.
+        Ett angivet datum innebär att utbudet inte längre är giltigt efter angivet datum.
+        (RFC 3339-format, t.ex. "2016-10-15").
+    offeredAt:
+      allOf:
+       - $ref: "/schemas/common.yaml#/SchoolUnitReference"
+       - description: Identifierare för skolenheten (SchoolUnit)
+    offeredSyllabuses:
+      type: array
+      items:
+        allOf:
+          - $ref: "/schemas/common.yaml#/SyllabusReference"
+          - description: >
+              Identifierare för kursplaner (Syllabus), innehåller alla ämnen/kurser,
+              även de som också beskrivs genom offeredProgrammes.
+    offeredProgrammes:
+      type: array
+      items:
+        $ref: "/schemas/common.yaml#/ProgrammeReference"
+  required:
+    - offeredSyllabuses
+    - offeredAt
+
+
+
+SchoolUnitOfferingsArray:
+  type: array
+  items:
+    $ref: "#/SchoolUnitOffering"
+
+SchoolUnitOfferings:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/SchoolUnitOffering"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data

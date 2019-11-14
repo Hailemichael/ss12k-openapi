@@ -1,0 +1,48 @@
+Resource:
+  type: object
+  title: Resource
+  properties:
+    id:
+      type: string
+      format: uuid
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+    displayName:
+      type: string
+      description: Namn på resursen.
+    description:
+      type: string
+      description: Beskrivning av resursen.
+    owner:
+      allOf:
+        - $ref: "/schemas/common.yaml#/ObjectReference"
+        - title: OrganisationReference
+          description: >
+            Möjlighet att ange vilket organisationselement resursen tillhör.
+  required:
+    - id
+    - meta
+    - displayName
+    - owner
+
+
+ResourcesArray:
+      type: array
+      items:
+        $ref: "#/Resource"
+
+Resources:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/Resource"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data

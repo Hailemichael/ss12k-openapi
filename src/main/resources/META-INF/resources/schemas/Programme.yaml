@@ -1,0 +1,103 @@
+Programme:
+  type: object
+  description: Ett program av kurser.
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Identifierare för programmet.
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+    name:
+      type: string
+      description: Program-/inriktningens namn.
+    type:
+      type: string
+      title: Code_ProgrammeType
+      enum:
+        - Yrkesprogram
+        - Högskoleförberedande program
+        - Intruduktionsprogram
+        - Nationellt yrkespaket
+        - Regionalt yrkespaket
+        - Fjärde tekniskt år
+        - Programinriktning
+        - Utgång
+      description: Typ av program.
+    parentProgramme:
+      type: string
+      format: uuid
+      description: |
+        Referens till det program en programinriktning/utgång tillhör.
+        Anges endast för typerna _Programinriktning_ och _Utgång_.
+        Program av typen _Utgång_ pekar alltid ett program av typen _Programinriktning_.
+        Program av typen _Programinriktning_ perkar alltid på ett program typen
+        _Yrkesprogram_, _Högskoleförberedande program_, _Intruduktionsprogram_,
+        _Nationellt yrkespaket_, _Regionalt yrkespaket_ eller _Fjärde tekniskt år_.
+        För övriga programtyper skall värdet inte vara definierat.
+    schoolType:
+      allOf:
+       - $ref: "/schemas/common.yaml#/components/schemas/SchoolTypesEnum"
+       - description: Skolform för programmet.
+    code:
+      type: string
+      description: >
+        Program-/inriktningskod(studievägskod).
+        För gymnasieskolans program/inriktningar måste denna finnas och vara enligt
+        Skolverkets definition.
+    content:
+      type: array
+      description: Kurser/ämnen som ingår i utbildningen.
+      items:
+        type: object
+        required:
+          - type
+          - content
+        properties:
+          type:
+            type: string
+            title: Code_ProgrammeContentType
+            description: >
+              Anger ingående kursers relation till programmet, såsom Programgemensamma.
+              Typen _Inriktning_ kan endast anges för program av typen _Programinriktning_.
+            enum:
+              - Gymnasiegemensamma
+              - Programgemensamma
+              - Inriktning
+              - Programfördjupning
+              - Gymnasiearbete
+              - Individuellt val
+          points:
+            type: integer
+            description: Poäng för innehållstypen i förekommande fall.
+          content:
+            type: array
+            items:
+              allOf:
+                - $ref: "/schemas/common.yaml#/SyllabusReference"
+                - description: Lista av ingående kursers kursplaner.
+  required:
+    - name
+    - schoolType
+
+ProgrammesArray:
+    type: array
+    items:
+      $ref: "#/Programme"
+
+Programmes:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/Programme"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data
+

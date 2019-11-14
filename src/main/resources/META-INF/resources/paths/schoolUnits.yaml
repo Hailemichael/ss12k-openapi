@@ -1,0 +1,128 @@
+schoolUnits:
+  get:
+    tags:
+      - Organisation
+    summary: Hämta en lista med skolenheter.
+    parameters:
+      - name: schoolUnitCode
+        description: >
+          Begränsa urvalet till de skolenheter som har den angivna Skolenhetskoden.
+          En Identifierare för skolenheten enligt Skolverket.
+        in: query
+        schema:
+          type: string
+      - name: organisation
+        description: >
+          Begränsa urvalet till de skolenheter som hör till det angivna Organisations Id.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: municipalityCode
+        description: >
+          Begränsa urvalet till de  skolenheter som har angiven kommunkod.
+        in: query
+        schema:
+          type: string
+      - name: schoolTypes
+        description: >
+          Begränsa urvalet till de skolenheter som har den angivna skolformen.
+        in: query
+        schema:
+          type: array
+          items:
+            $ref: "/schemas/common.yaml#/components/schemas/SchoolTypesEnum"
+      - name: startDate.onOrAfter
+        description: >
+          Begränsa urvalet av skolenheter till de som är aktiva
+          inom ett intervall som påbörjas på angivet datum
+          (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: endDate.onOrBefore
+        description: >
+          Begränsa urvalet av skolenheter till de som är aktiva
+          inom ett intervall som avslutas på angivet datum
+          (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "searchParameters.yaml#/Sortkey"
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/SchoolUnit.yaml#/SchoolUnits"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`, `organisation`,
+          `municipalityCode`, `schoolTypes`,`startDate.onOrAfter`,
+          `endDate.onOrBefore`). Kan inte kombineras med `pageToken`.
+
+schoolUnitsLookup:
+  post:
+    tags:
+      - Organisation
+    summary: Hämta många skolenheter baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta skolenheter en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många skolenheter
+      på en gång genom att ange POST:a en lista med önskade skolenheter.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/SchoolUnit.yaml#/SchoolUnitsArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+schoolUnitById:
+  get:
+    tags:
+      - Organisation
+    summary: Hämta en skolenhet baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för skolenheten som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/SchoolUnit.yaml#/SchoolUnit"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Duty not found

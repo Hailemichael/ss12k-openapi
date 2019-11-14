@@ -1,0 +1,177 @@
+placements:
+  get:
+    tags:
+      - Person
+    summary: Hämta en lista med placeringar.
+    parameters:
+      - name: schoolUnit
+        description: >
+          Begränsa urvalet till de barn som har en placering på angiven
+          skolenhet. Detta kan kombineras med startDate.onOrAfter
+          och endDate.onOrBefore för att begränsa till aktiva placeringar.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: studentGroup
+        description: >
+          Begränsa urvalet till de barn som har en placering på angiven grupp.
+          Detta kan kombineras med startDate.onOrAfter
+          och endDate.onOrBefore för att begränsa till aktiva placeringar.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: startDate.onOrAfter
+        description: >
+          Begränsa urvalet av placering till de som har
+          placeringar som är aktiva inom det intervall
+          som startar på angivet datum (RFC 3339-format,
+          t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: endDate.onOrBefore
+        description: >
+          Begränsa urvalet av placering till de som har
+          placeringar som är aktiva inom det intervall
+          som avslutas på angivet datum (RFC 3339-format,
+          t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: child
+        description: >
+          Begränsa urvalet till ett barn. Detta kan kombineras med startDate.onOrAfter
+          och endDate.onOrBefore för att begränsa till aktiva placeringar.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: owner
+        description: >
+          Begränsa urvalet till placeringar med denna ägare. Detta kan kombineras med
+          startDate.onOrAfter och endDate.onOrBefore för att begränsa till aktiva
+          placeringar.
+        in: query
+        schema:
+          type: string
+          format: uuid
+
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        description: Anger hur resultatet ska sorteras.
+        in: query
+        schema:
+          type: string
+          enum:
+            - StartDateAsc
+            - StartDateDesc
+            - EndDateAsc
+            - EndDateDesc
+            - ModifiedDesc
+          default: ModifiedDesc
+
+      - $ref: "searchParameters.yaml#/PageToken"
+      - $ref: "searchParameters.yaml#/Limit"
+
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Placement.yaml#/Placements"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`, `schoolUnit`,
+          `startDate.onOrAfter`,`endDate.onOrBefore`).
+          Kan inte kombineras med `pageToken`.
+
+placementsLookup:
+  post:
+    tags:
+      - Person
+    summary: >
+      Hämta många placeringar baserat på en lista av ID:n eller av Id från personer.
+    description: >
+      Istället för att hämta placeringar en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många placeringar
+      på en gång genom att ange POST:a en lista med önskade placeringar.
+    parameters:
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Placement.yaml#/PlacementsArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ids:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+              personIds:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+
+      required: true
+
+placementsById:
+  get:
+    tags:
+      - Person
+    summary: Placering baserat på id
+    parameters:
+      - name: id
+        in: path
+        description: ID för placering som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Placement.yaml#/Placement"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Placement not found
+
+ExpandParameter:
+  name: expand
+  description: Beskriver om expanderade data ska hämtas
+  in: query
+  schema:
+    type: array
+    items:
+      type: string
+      enum: [child]

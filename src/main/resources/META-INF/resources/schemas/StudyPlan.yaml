@@ -1,0 +1,122 @@
+StudyPlan:
+  type: object
+  title: StudyPlan
+  description: En elevs studieplan
+  properties:
+    id:
+      type: string
+      format: uuid
+    student:
+      allOf:
+        - $ref: "/schemas/common.yaml#/PersonReference"
+        - description: Den elev som studieplanen gäller för.
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+    content:
+      type: array
+      items:
+        type: object
+        title: StudyPlanContent
+        properties:
+          title:
+            type: string
+            description: Anger rubriken i elevens studieplan
+          type:
+            type: string
+            title: Code_StudyPlanContentType
+            enum:
+              - Gymnasiegemensamma
+              - Programgemensamma
+              - Inriktning
+              - Programfördjupning
+              - Gymnasiearbete
+              - Individuellt val
+              - Borttagna
+              - Utökade
+          points:
+            type: integer
+            description: Anger poängtalet för den aktuella kategorin av kurser
+          syllabuses:
+            type: array
+            items:
+              type: object
+              title: StudyPlanSyllabus
+              properties:
+                syllabus:
+                  type: string
+                  title: SyllabusReference
+                  description: Rererens till en kursplan.
+                  format: uuid
+                note:
+                  type: string
+                  description: Notering angående kursens status i elevens studieplan
+                startDate:
+                  type: string
+                  format: date
+                  description: >
+                    Startdatum när eleven läser kursen
+                    (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+                endDate:
+                  type: string
+                  format: date
+                  description: >
+                    Slutdatum för när eleven läser kursen
+                    (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+                hours:
+                  type: integer
+                  description: >
+                    Planlagda timmar för elevens deltagande i kursen.
+                    Främst avsedd för studieplaner till vuxenutbildning.
+              required:
+                - syllabus
+        required:
+          - syllabuses
+    notes:
+      type: array
+      items:
+        type: object
+        title: StudyPlanNotes
+        properties:
+          type:
+            type: string
+            title: Code_StudyPlanNoteType
+            enum:
+              - Anteckningar
+              - Andra insatser som är gynnsamma för elevens kunskapsutveckling
+              - Elevens tidigare arbetslivserfarenhet och studier
+              - Validering av kunskaper och kompetenser
+              - Elevens mål med studierna
+          note:
+            type: string
+    startDate:
+      type: string
+      format: date
+      description: >
+        Startdatum för studieplanen
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    endDate:
+      type: string
+      format: date
+      description: >
+        Slutdatum för studieplanen 
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+  required:
+    - id
+    - student
+    - startDate
+
+StudyPlans:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/StudyPlan"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token som
+          skickades in som query parameter.
+  required:
+    - data

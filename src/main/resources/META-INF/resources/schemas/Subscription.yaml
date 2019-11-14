@@ -1,0 +1,83 @@
+CreateSubscription:
+  type: object
+  title: Subscription
+  description: >
+    Skapas en prenumeration på ändringar av angivna objekt.
+    Vid ändringar i informationsmängden hos informationsägaren ska det
+    konsumerande systemet notifieras via den URL som anges i `target`.
+    Det konsumerande systemet gör därefter anrop för att inhämta
+    ändrad eller borttagen information. Informationsägaren ska skicka
+    en notis för varje registrerad prenumeration så fort en förändring
+    identifieras. Informationsägaren kan välja att
+    skicka en notis för multipla förändringar.
+  properties:
+    name:
+      description: Ett beskrivande namn på webhook:en.
+      type: string
+    target:
+      description: >
+        URL:en som webhook:en ska posta till.
+      type: string
+    resourceTypes:
+      type: array
+      items:
+        type: object
+        properties:
+          resource:
+            $ref: "/schemas/common.yaml#/components/schemas/EndPointsEnum"
+    organisations:
+      description: >
+        Begränsa till data härledd till listade organisationer.
+        Om denna utelämnas så fås samliga organisationer som klienten har rätt till.
+        Vårdnadshavare relateras till organisationer genom sina barn.
+        Anställdas barn kan inte härledas till organisationen baserat sina föräldrar.
+      type: array
+      items:
+        type: string
+        format: uuid
+  required:
+    - name
+    - target
+    - resourceTypes
+
+Subscription:
+  allOf:
+    - type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        expires:
+          type: string
+          format: date-time
+      required:
+        - id
+        - expires
+    - $ref: "#/CreateSubscription"
+
+Subscriptions:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/Subscription"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data
+
+Error:
+  required:
+    - code
+    - message
+  properties:
+    code:
+      type: integer
+      format: int32
+    message:
+      type: string

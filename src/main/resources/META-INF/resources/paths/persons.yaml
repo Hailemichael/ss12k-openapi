@@ -1,0 +1,192 @@
+persons:
+  get:
+    tags:
+      - Person
+    summary: Hämta en lista med personer.
+    parameters:
+      - name: enrolment.schoolUnit
+        description: >
+          Begränsa urvalet till de elever som har en inskrivning (enrolment) på angiven
+          skolenhet. Detta kan kombineras med enrolment.startDate.onOrAfter
+          och enrolment.endDate.onOrBefore för att begränsa till aktiva inskrivningar.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: enrolment.startDate.onOrAfter
+        description: >
+          Begränsa urvalet av personer till de som har
+          inskrivningar som är aktiva inom det intervall
+          som startar på angivet datum (RFC 3339-format,
+          t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: enrolment.endDate.onOrBefore
+        description: >
+          Begränsa urvalet av personer till de som har
+          inskrivningar som är aktiva inom det intervall
+          som avslutas på angivet datum (RFC 3339-format,
+          t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+
+      - name: placement.schoolUnit
+        description: >
+          Begränsa urvalet till de elever som har en placering på angiven
+          skolenhet. Detta kan kombineras med placement.startDate.onOrAfter
+          och placement.endDate.onOrBefore för att begränsa till aktiva placeringar.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: placement.startDate.onOrAfter
+        description: >
+          Begränsa urvalet av personer till de som har
+          placeringar som är aktiva inom det intervall
+          som startar på angivet datum (RFC 3339-format,
+          t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: placement.endDate.onOrBefore
+        description: >
+          Begränsa urvalet av personer till de som har
+          placeringar som är aktiva inom det intervall
+          som avslutas på angivet datum (RFC 3339-format,
+          t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: dutySchoolUnit
+        description: >
+          Begränsa urvalet till de tjänstgöringar som är kopplade till en skolenhet.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        description: Anger hur resultatet ska sorteras.
+        in: query
+        schema:
+          type: string
+          enum:
+            - DisplayNameAsc
+            - GivenNameDesc
+            - GivenNameAsc
+            - FamilyNameDesc
+            - FamilyNameAsc
+            - NorEduPersonNIN
+            - ModifiedDesc
+          default: ModifiedDesc
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas//schemas/Person.yaml#/PersonsExpanded"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `enrolment.schoolUnit`,
+          `enrolment.startDate.onOrAfter`, `enrolment.endDate.onOrBefore`,
+          `placement.schoolUnit`, `placement.startDate.onOrAfter`,
+          `placement.endDate.onOrBefore`,`dutySchoolUnit`, `expand`).
+          Kan inte kombineras med `pageToken`.
+
+personsLookup:
+  post:
+    tags:
+      - Person
+    summary: Hämta många personer baserat på en lista av ID:n eller personnummer.
+    description: >
+      Istället för att hämta personer en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många personer
+      på en gång genom att ange POST:a en lista med önskade personer.
+    parameters:
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Person.yaml#/PersonsExpandedArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ids:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+              norEduPersonNINs:
+                type: array
+                items:
+                  type: string
+                  pattern: '^\d{8}[A-Z0-9]{2}\d{2}$'
+            example:
+              ids:
+                - d544563a-747a-42d3-8d37-415a101537fa
+              norEduPersonNINs:
+                - "201002037271"
+      required: true
+
+personsById:
+  get:
+    tags:
+      - Person
+    summary: Get person by person id
+    parameters:
+      - name: id
+        in: path
+        description: ID för personen som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Person.yaml#/PersonExpanded"
+      "400":
+        description: Invalid personname supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Person not found
+
+ExpandParameter:
+  name: expand
+  description: Beskriver om expanderade data ska hämtas
+  in: query
+  schema:
+    type: array
+    items:
+      type: string
+      enum: [duties, responsibleFor, placements, ownedPlacements, studentGroups]

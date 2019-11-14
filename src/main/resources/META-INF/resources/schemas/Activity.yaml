@@ -1,0 +1,156 @@
+Activity:
+  title: Activity
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Identifierare för aktiviteten.
+
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+
+    displayName:
+      type: string
+      description: Namn på aktiviteten, i presentationssyfte.
+
+    calendarEventsRequired:
+      type: boolean
+      description: >
+        Detta ska uttrycka huruvida aktiviteten ska vara
+        underlag för generering av lektion eller inte.
+
+    startDate:
+      type: string
+      format: date
+      description: >
+        Datum för när aktiviteten startar
+        (RFC 3339-format, t.ex. "2016-10-15").
+
+    endDate:
+      type: string
+      format: date
+      description: >
+        Datum för när aktiviteten slutar
+        (RFC 3339-format, t.ex. "2016-10-15").
+
+    activityType:
+      type: string
+      title: Code_ActivityType
+      enum:
+        - Undervisning
+        - Elevaktivitet
+        - Läraraktivitet
+        - Mentorskap
+        - Omsorg
+        - Övrigt
+      description: >
+        Beskriver vilken typ av aktivitet som avses.
+
+        - _Undervisning_
+
+            Schemalagd tid med koppling till timplan, som ska närvarorapporteras.
+
+        - _Elevaktivitet_
+
+            Schemalagd tid för elever som inte är undervisning enligt timplan,
+            och som ska närvarorapporteras, exempelvis mentorstid, klassråd
+            eller friluftsdag
+
+        - _Läraraktivitet_
+
+            Tid för lärare som inte är undervisning och som ingår i lärarens arbetstid,
+            kan vara schemalagd, men ska inte närvarorapporteras, exempelvis konferenstid.
+
+        - _Övrigt_
+
+            Läxhjälp, lunch, bokning och annat som finns på schemat,
+            men inte är undervisning och inte ska närvarorapporteras`
+
+    comment:
+      type: string
+      description: En text med kompletterande information.
+
+    minutesPlanned:
+      type: integer
+      description: Den totalt planerade tiden i minuter.
+
+    groups:
+      type: array
+      minItems: 1
+      items:
+        $ref: "/schemas/common.yaml#/StudentGroupReference"
+      description: De grupper som är kopplade till aktiviteten.
+
+    teachers:
+      type: array
+      items:
+        type: object
+        title: DutyAssignment
+        properties:
+          duty:
+            $ref: "/schemas/common.yaml#/DutyReference"
+          startDate:
+            type: string
+            format: date
+            description: >
+              Datum för när lärarens deltagande i aktiviteten startar
+              (RFC 3339-format, t.ex. "2016-10-15").
+          endDate:
+            type: string
+            format: date
+            description: >
+              Datum för när lärarens deltagande i aktiviteten slutar
+              (RFC 3339-format, t.ex. "2016-10-15").
+          minutesPlanned:
+            type: integer
+            description: Det antal minuter läraren är kopplad till aktiviteten
+      description: De lärare (Duty-objekt) som är kopplade till aktiviteten.
+
+    syllabus:
+      allOf:
+        - $ref: "/schemas/common.yaml#/SyllabusReference"
+        - description: Det kurs- eller ämnesplan som aktiviteten är knuten till.
+
+    schoolUnit:
+      allOf:
+       - $ref: "/schemas/common.yaml#/SchoolUnitReference"
+       - description: Den skolenhet som aktiviteten är knuten till.
+
+    parentActivity:
+      allOf:
+       - $ref: "/schemas/common.yaml#/ActivityReference"
+       - description: >
+          Möjlighet att koppla aktiviteten till en eller flera
+          ursprungliga “föräldraaktiviteter”.
+
+  required:
+    - id
+    - displayName
+    - schoolUnit
+    - calendarEventsRequired
+    - startDate
+    - groups
+
+
+
+ActivitiesArray:
+    type: array
+    items:
+      $ref: "#/Activity"
+
+Activities:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/Activity"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data

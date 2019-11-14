@@ -1,0 +1,48 @@
+Room:
+  type: object
+  title: Room
+  description: Ett rum eller en plats som kan bokas i ett skolschema.
+  properties:
+    id:
+      type: string
+      format: uuid
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+    displayName:
+      type: string
+      description: Namn på rum/lokal/plats.
+    seats:
+      type: integer
+      description: Antal platser i lokalen.
+    owner:
+      type: object
+      allOf:
+        - $ref: "/schemas/common.yaml#/ObjectReference"
+        - title: OrganisationReference
+          description: Möjlighet att ange vilket organisationselement resursen tillhör.
+  required:
+    - id
+    - meta
+    - displayName
+    - owner
+
+RoomsArray:
+        type: array
+        items:
+          $ref: "#/Room"
+
+Rooms:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/Room"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data

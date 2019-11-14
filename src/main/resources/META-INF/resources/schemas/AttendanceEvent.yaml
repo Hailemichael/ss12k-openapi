@@ -1,0 +1,79 @@
+AttendanceEvent:
+  type: object
+  title: AttendanceEvent
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Identifierare för den anmälda frånvaron.
+      readOnly: true
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+      readOnly: true
+    time:
+      type: string
+      format: date-time
+    eventType:
+      type: string
+      title: Code_AttendanceEventType
+      enum:
+        - In
+        - Ut
+    person:
+      allOf:
+        - $ref: "/schemas/common.yaml#/PersonReference"
+        - description: Referens till barnet eller eleven
+    registeredBy:
+      allOf:
+        - $ref: "/schemas/common.yaml#/PersonReference"
+        - description: Anger den person som registrat in- respektive utcheckning.
+    group:
+      allOf:
+        - $ref: "/schemas/common.yaml#/StudentGroupReference"
+        - description: Den avdelning eller grupp på förskoleenheten som närvaron.
+    _embedded:
+      type: object
+      readOnly: true
+      properties:
+        registeredBy:
+          $ref: "/schemas/Person.yaml#/Person"
+        child:
+          $ref: "/schemas/Person.yaml#/Person"
+        group:
+          $ref: "/schemas/StudentGroup.yaml#/StudentGroup"
+
+  required:
+    - id
+    - meta
+    - time
+    - eventType
+    - child
+    - group
+
+
+AttendanceEvents:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/AttendanceEvent"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data
+
+Error:
+  required:
+    - code
+    - message
+  properties:
+    code:
+      type: integer
+      format: int32
+    message:
+      type: string

@@ -1,0 +1,123 @@
+Om man har lastModified på ett expanderat objekt, vems lastModified är det då?
+
+duty vs assignmentRole tex?
+
+studentgroup utan koppling till aktivitet
+studentmembership finns med, start o slut + referens till person med displayName + ID
+
+problem: assignmentRole saknar ändå personen, man får bara duty. ska studentgroup hämta alla duty OCH alla personer som relaterar till duties. med expandera-flagga?
+
+TODO:
+ - Land läggstill i adress
+
+Kontakt uppgifter
+ - Typerna Skola - Anställd
+           Skola - Elev
+    läggs till och kräver att uppgiften kopplas till organisation
+
+Avbortt läggs till i inskrvning
+    - Dropout date
+
+Enrolment
+    - Specfication
+
+
+ändringar:
+
+displayName -> name  när det *är* ett namn och inte ett aggregerat resultat
+
+owner -> schoolUnit för activity o studentgroup
+
+# Aggregated attendence
+ - Hur skall vi särskilja på "Musikskola" och "Språkcentrum"
+   - Hänger på elevens studieplan / relaterad inskrivning
+   - Vi skulle behöva ett elev objekt eller ett id för inskrivning.
+
+# Hur hanterar vi felkoder? 
+    - Ett gemensamt felobjekt?
+    - Lista med logiska felkoder + extra systemspecifika?
+    - "Hanteras ej av systemet felmeddelande?"
+        - Ex: posta en närvaroregistrering till ett system vilket inte hanterar närvaroregistrering.
+
+# CalendrEvent:
+ - Jag vill flytta ut studentExceptions till en egen typ. Tänkte usecase: Hänta kalenderhänderlser för en elev. => Få ut en massa info om vilka elever som inte skall med för en viss händelse! 
+
+# ID referenser:
+Hur skall de genererllt fungera?
+  - student: {
+      id: uuid
+  }
+  - student: uuid
+
+# AttendanceEvent 
+Skall denna heta AttendanceEvent eller ChildCareAttendanceEvent?
+Det skiljer sig i wordfilen och i openapi-spec.
+
+# ChildcareSchedule
+I våra system så är ett schema kopplat till en baromsorgsplats dvs samma barn på samma avdelning kan styras av två separata VH och betraktas som olika scheman. (Hanteras av att det är olika placeringar och schemat är kopplat till de olika placeringarna)
+Kommentarer skulle också vara bra att få till för avslag/temporära scheman mm. 
+ - message
+ - ApprovalStatus
+
+# GroupAssignment vs StudentAssignment
+Borde vi inte endast överföra det beräknade värdet (StudentAssignment)? 
+ - GroupAssignment kan ha ett värde för att hitta alla Aktiviteter för en klass?
+
+# StudentGroupException 
+Denna borde inte finnas!
+
+# Attendance
+Inkonsikvent namnsätttning reporter vs. registredBy medvetet val?
+
+# Placement
+Vi bör lägga till placeringar för att kunna moddelera förskola korrekt
+
+
+# Syllabus:
+Både rubrik OCH beskrivning på specialiseringskurser (kurser som har ett S som nionde tecken i koden)
+ 
+# Studyplan
+Saknas i flödesschemat
+
+Studieplan är kopplad till program på GY
+Man avslutar en studieplan om man avbryter ett program och upprättar en ny om man börjar på ett nytt program
+ 
+
+Typer av grupperingar i studieplan:
+Gymnasiegemensamma ämnen
+Gymnasiesärskolegemensamma ämnen
+Programgemensamma ämnen
+Individuellt val
+Gymnasiearbete
+Gymnasiesärskolearbete
+Inriktning
+Programfördjupning
+Utökade kurser
+Reducerade kurser
+Bortvalda kurser på grund av individuellt anpassat program
+Bortvalda kurser
+Gymnasiekurser
+Grundskoleämne
+Nationella kurser
+Ämnesområde
+Nationella kurser och delkurser
+Individuella kurser
+Övrigt
+ 
+Anteckningar generellt(2 GY, 3 VUX):
+Anteckningar
+Andra insatser som är gynnsamma för elevens kunskapsutveckling
+Elevens tidigare arbetslivserfarenhet och studier
+Validering av kunskaper och kompetenser
+Elevens mål med studierna
+ 
+ 
+ 
+ 
+ 
+ 
+?????
+ 
+Datum för kurser
+ 
+Man bör kunna definiera timmar per kurs för elev

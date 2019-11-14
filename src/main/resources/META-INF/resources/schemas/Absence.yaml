@@ -1,0 +1,90 @@
+Absence:
+  title: Absence
+  type: object
+  description: >
+    Absence ska användas för att beskriva anmäld frånvaro för en elev.
+    Den anmälda frånvaron kan avse en av skolan beviljad ledighet
+    eller en frånvaro av annan art som anmäls av eleven själv
+    eller elevens vårdnadshavare.
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Identifierare för den anmälda frånvaron.
+      readOnly: true
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+      readOnly: true
+    startTime:
+      type: string
+      format: date-time
+      description: >
+        Starttid för den anmälda frånvaron
+        (RFC 3339 format, tex "2015-12-12T10:30:00+01:00").
+    endTime:
+      type: string
+      format: date-time
+      description: >
+        Sluttid för den anmälda frånvaron
+        (RFC 3339, format tex "2015-12-12T10:30:00+01:00").
+    type:
+      allOf:
+        - $ref: "/schemas/common.yaml#/components/schemas/AbsenceEnum"
+        - description: >
+            Anger om det rör beviljad ledighet eller
+            frånvaro anmäld av vårdnadshavare.
+    student:
+      allOf:
+        - $ref: "/schemas/common.yaml#/PersonReference"
+        - description: Referens till eleven.
+    schoolUnit:
+      allOf:
+        - $ref: "/schemas/common.yaml#/SchoolUnitReference"
+        - description: Den skolenhet som den anmälda frånvaron avser.
+    registeredBy:
+      allOf:
+        - $ref: "/schemas/common.yaml#/PersonReference"
+        - description: >
+            Referens till den person som registrerat den anmälda frånvaron.
+  required:
+    - id
+    - meta
+    - startTime
+    - endTime
+    - type
+    - student
+
+
+AbsencesArray:
+    type: array
+    items:
+      $ref: "#/Absence"
+
+
+Absences:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/Absence"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta
+          på det token som skickades in som query parameter.
+  required:
+    - data
+
+
+Error:
+  required:
+    - code
+    - message
+  properties:
+    code:
+      type: integer
+      format: int32
+    message:
+      type: string

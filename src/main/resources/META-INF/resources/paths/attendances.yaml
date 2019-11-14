@@ -1,0 +1,151 @@
+attendances:
+  get:
+    tags:
+      - Närvaro
+    summary: Returnerar registrerad närvaro utifrån en aktivitet eller student.
+    parameters:
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AggregatedAttendance.yaml#/Attendances"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`).
+          Kan inte kombineras med `pageToken`.
+
+  post:
+    tags:
+      - Närvaro
+    summary: Registrera en ny närvaro post.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+
+    responses:
+      "200":
+        description: Posten skapad.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+      default:
+        description: unexpected error
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AggregatedAttendance.yaml#/Error"
+
+attendancesLookup:
+  post:
+    tags:
+      - Närvaro
+    summary: >
+      Hämta närvaro baserat på en lista av ID:n eller av Id från aktiviteter
+      eller av Id från elever.
+    description: >
+      Istället för att hämta aktiviteter en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många aktiviteter
+      på en gång genom att ange POST:a en lista med önskade aktiviteter.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AggregatedAttendance.yaml#/AttendancesArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                activities:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                students:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      required: true
+
+attendanceById:
+  get:
+    tags:
+      - Närvaro
+    summary: Hämta en närvaro post utifrån ID.
+    parameters:
+      - name: id
+        description: Hämta en Attendance post.
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      "200":
+        description: Posten returneras.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+      "204":
+        description: Posten borttagen.
+      "400":
+        description: Felaktigt id.
+      "403":
+        description: Otilläckliga rättigheter.
+      "404":
+        description: Posten hitades inte.
+      default:
+        description: Okänt fel.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AggregatedAttendance.yaml#/Error"
+  delete:
+    tags:
+      - Närvaro
+    summary: Ta bort en närvaro post.
+    parameters:
+      - name: id
+        in: path
+        description: ID för närvaro posten som ska tas bort.
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      "204":
+        description: Post borttagen.
+      "400":
+        description: Felaktigt id.
+      "403":
+        description: Otilläckliga rättigheter.
+      "404":
+        description: Posten hittades inte.

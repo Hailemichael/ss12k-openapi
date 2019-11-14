@@ -1,0 +1,165 @@
+deletedEntities:
+  get:
+    tags:
+      - Borttag
+    summary: Hämta en lista av entiteter som tagits bort av tjänsten.
+    parameters:
+      - name: after
+        in: query
+        description: >
+          Hämta borttag som inträffat efter specificerad tidpunkt
+          (RFC 3339 format, tex "2015-12-12T10:30:00+01:00").
+        schema:
+          type: string
+          format: date-time
+      - name: entities
+        in: query
+        description: En lista med de entitetstyper vars borttag ska hämtas
+        schema:
+          type: array
+          items:
+            $ref:  "/schemas/common.yaml#/components/schemas/EndPointsEnum"
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "#/DeletedEntities"
+      400:
+        description: >
+          Filter (ex `after`, `entity`) kan inte kombineras med `pageToken`
+
+
+DeletedEntities:
+  type: object
+  title: deletedEntities
+  properties:
+    data:
+      type: object
+      properties:
+
+        absences:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        attendanceEvents:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        attendances:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        grades:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        calendarEvents:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        attendanceSchedules:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        resources:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        rooms:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        activitites:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        duties:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        placements:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        studyPlans:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        programmes:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        syllabuses:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        schoolUnitOfferings:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        studentGroups:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        persons:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        schoolUnits:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+        organisations:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    pageToken:
+      type: string
+      nullable: true
+      description: >
+        Om värdet är null finns inget mer att hämta på det token
+        som skickades in som query parameter.
+  required:
+    - data

@@ -1,0 +1,133 @@
+AttendanceSchedule:
+  type: object
+  title: AttendanceSchedule
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Identifierare för vistelseschemat.
+      readOnly: true
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+      readOnly: true
+    placement:
+      allOf:
+        - $ref: "/schemas/common.yaml#/PlacementReference"
+        - description: Referens till en placeringen schemat avser.
+    numberOfWeeks:
+      type: integer
+      description: Hur många veckor schemat gäller för innan det "börjar om".
+    startDate:
+      type: string
+      format: date
+      description: >
+        Anger datum då schemat startar
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    endDate:
+      type: string
+      format: date
+      description: >
+        Anger datum då schemat slutar
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    temporary:
+      type: boolean
+      description: >
+        Anger om detta är ett undantag som gäller i stället för normalschemat
+        under en begränsad tid. Slutdatum måste anges.
+      default: false
+    state:
+      type: array
+      items:
+        type: object
+        title: AttendanceScheduleState
+        properties:
+          state:
+            type: string
+            title: Code_AttendanceScheduleState
+            enum:
+              - Godkänt
+              - Begärt
+              - Nekat
+            description: Beskriver schemats tillstånd.
+          registeredAt:
+            type: string
+            format: date-time
+            description: >
+              Tid och datum för tillstånd
+              (RFC 3339 format, tex "2015-12-12T10:30:00+01:00").
+          comment:
+            type: string
+            description: En kommentar angående tillståndet.
+          registeredBy:
+            allOf:
+              - $ref: "/schemas/common.yaml#/PersonReference"
+              - description: Referens till den person som registrerat tillståndet.
+        required:
+          - state
+          - registeredAt
+    scheduleEntries:
+      type: array
+      items:
+        type: object
+        title: AttendanceScheduleEntry
+        properties:
+          weekOffset:
+            type: integer
+            description: >
+              Anger vecka för alternerande schema, exempelvis 0, 1, eller 2
+              beroende på hur många olika veckor som är specificerade i schemat.
+          dayOfWeek:
+            type: string
+            enum:
+              - Måndag
+              - Tisdag
+              - Onsdag
+              - Torsdag
+              - Fredag
+              - Lördag
+              - Söndag
+            description: >
+              Anger veckodag.
+          startTime:
+            type: string
+            format: "^[0-9]{2}:[0-9]{2}$"
+            description: Starttid på dagen för schemat (IS08601 format, t.ex. "08:30").
+          length:
+            type: integer
+            description: Längden på den tid efter starttid som barnet ska vara
+
+  required:
+    - id
+    - meta
+    - startDate
+    - scheduleDays
+    - placement
+    - state
+
+Error:
+  required:
+    - code
+    - message
+  properties:
+    code:
+      type: integer
+      format: int32
+    message:
+      type: string
+
+
+AttendanceSchedules:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/AttendanceSchedule"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta
+          på det token som skickades in som query parameter.
+  required:
+    - data

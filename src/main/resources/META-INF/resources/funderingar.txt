@@ -1,0 +1,47 @@
+Tanke med aggregerad närvaro är 
+
+hur gör vi med olika skolenheter, med samma elev.
+
+vi saknar en ID-satt inskrivning som skiljer sig från eleven, så vi vet vilken skolenhet som avses.
+
+När eleven byter skola kommer inte läsa samma studieplan. Vi borde troligen visa ogiltig frånvaro i vilket fall.
+kanske ska vi ha två olika aggregatedAttendance, en för betyg och en annan för statistik.
+
+
+
+studieplan
+ - Varför har vi en lastUpdate och inte den vanliga lastModified?
+
+placements/programmes:
+  - SchoolType? Hur är caset runt denna?
+
+Behöver vi speca asc/desc
+ Persons 
+   - DisplayName
+
+ placements:
+   - SchoolType
+
+ programmes: 
+   - Name
+   - SchoolType
+   - Code
+resources
+   - DisplayName
+rooms 
+   - DisplayName
+
+
+2019-05-22 (SJ) 
+ 1. För organisation hur skall denna fungera? Skall vi verkligen ha den kvar? 
+    - name: expand
+      description: >
+        Expandera underliggande organisationselement och skolenheter.
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+
+ 2. I lookup funktionerna behöver vi lägga till Expand? ( och ExpandReferenceNames ).     
+

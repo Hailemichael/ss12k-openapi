@@ -1,0 +1,99 @@
+syllabuses:
+  get:
+    tags:
+      - Studieinformation
+    summary: Hämta en lista med syllabuses.
+    parameters:
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        description: Anger hur resultatet ska sorteras.
+        in: query
+        schema:
+          type: string
+          enum:
+            - ModifiedDesc
+            - SubjectNameAsc
+            - SubjectNameDesc
+            - SubjectCodeAsc
+            - SubjectCodeDesc
+            - CourseNameAsc
+            - CourseNameDesc
+            - CourseCodeAsc
+            - CourseCodeDesc
+            - SubjectDesignationAsc
+            - SubjectDesignationDesc
+          default: ModifiedDesc
+
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Syllabus.yaml#/Syllabuses"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`).
+          Kan inte kombineras med `pageToken`.
+
+syllabusesLookup:
+  post:
+    tags:
+      - Studieinformation
+    summary: Hämta många syllabuses baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta syllabuses en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många syllabuses
+      på en gång genom att ange POST:a en lista med önskade syllabuses.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Syllabus.yaml#/SyllabusesArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+syllabusById:
+  get:
+    tags:
+      - Studieinformation
+    summary: Hämta syllabus baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för syllabus som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Syllabus.yaml#/Syllabus"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Duty not found

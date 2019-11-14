@@ -1,0 +1,148 @@
+subscriptions:
+  get:
+    tags:
+      - Prenumeration
+    summary: Hämta en lista av prenumerationer.
+    parameters:
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Subscription.yaml#/Subscriptions"
+
+  post:
+    tags:
+      - Prenumeration
+    summary: Skapa en prenumeration
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/Subscription.yaml#/CreateSubscription"
+            example:
+              name: Nya
+              target: https://pastebin/788
+              resourceTypes:
+                - Organsation
+                - SchoolUnit
+                - Person
+                - Duty
+    callbacks:
+      subscriptionEvent: # Event name
+        "{$request.body#/target}": # The callback URL, Refers to the passed URL
+          post:
+            requestBody: # Contents of the callback message
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      modifiedEntites:
+                        type: array
+                        items:
+                          $ref: "/schemas/common.yaml#/components/schemas/EndPointsEnum"
+                        description: >
+                          En lista med datatyper där det finns uppdaterad eller ny information att hämta
+                          på respektive ändpunkt.
+                      deletedEntities:
+                        type: boolean
+                        description: >
+                          True indikerar att det finns information om borttagna entiteter
+                          att hämta från ändpunkten `deletedEntitites`.
+
+            responses: # Expected responses to the callback message
+              "200":
+                description: Your server returns this code if it accepts the callback
+
+    responses:
+      201:
+        description: response of new object
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Subscription.yaml#/Subscription"
+      default:
+        description: unexpected error
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Subscription.yaml#/Error"
+
+subscription_by_id:
+  delete:
+    tags:
+      - Prenumeration
+    summary: Ta bort en prenumeration
+    parameters:
+      - name: id
+        in: path
+        description: ID för prenumerationen som ska tas bort
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      "204":
+        description: Prenumeration borttagen.
+      "400":
+        description: Invalid id
+      "403":
+        description: Not authorised
+      "404":
+        description: Prenumeration not found
+  get:
+    tags:
+      - Prenumeration
+    summary: Hämta prenumeration baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för prenumerationen som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Subscription.yaml#/Subscription"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Prenumeration not found
+  patch:
+    tags:
+      - Prenumeration
+    summary: Uppdatera expire time på prenumerationen baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för prenumerationen som ska uppdateras
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Subscription.yaml#/Subscription"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Prenumeration not found

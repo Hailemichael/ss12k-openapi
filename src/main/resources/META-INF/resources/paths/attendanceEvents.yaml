@@ -1,0 +1,137 @@
+attendance_events:
+  get:
+    tags:
+      - Närvarohändelser
+    summary: Returnerar registrerade in-/utcheckningar.
+    parameters:
+      - name: group
+        description: Begränsa urvalet till utpekade gruppers ID.
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+      - name: child
+        description: Begränsa urvalet till utpekade barns ID.
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+                $ref: "/schemas/AttendanceEvent.yaml#/AttendanceEvents"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`,`group`, `child`).
+          Kan inte kombineras med `pageToken`.
+
+  post:
+    tags:
+      - Närvarohändelser
+    summary: Registrera en ny närvarohändelse (in-/utcheckning).
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/AttendanceEvent.yaml#/AttendanceEvent"
+
+    responses:
+      "200":
+        description: Posten skapad.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AttendanceEvent.yaml#/AttendanceEvent"
+      default:
+        description: unexpected error
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AttendanceEvent.yaml#/Error"
+
+attendance_events_by_id:
+  get:
+    tags:
+      - Närvarohändelser
+    summary: Hämta en närvarohändelse utifrån ID.
+    parameters:
+      - name: id
+        description: Hämta en närvarohändelse.
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: Posten returneras.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AttendanceEvent.yaml#/AttendanceEvent"
+      "204":
+        description: Posten borttagen.
+      "400":
+        description: Felaktigt id.
+      "403":
+        description: Otilläckliga rättigheter.
+      "404":
+        description: Posten hitades inte.
+      default:
+        description: Okänt fel.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AttendanceEvent.yaml#/Error"
+  delete:
+    tags:
+      - Närvarohändelser
+    summary: Ta bort en närvarohändelse.
+    parameters:
+      - name: id
+        in: path
+        description: ID för närvaro posten som ska tas bort.
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      "204":
+        description: Post borttagen.
+      "400":
+        description: Felaktigt id.
+      "403":
+        description: Otilläckliga rättigheter.
+      "404":
+        description: Posten hittades inte.
+
+ExpandParameter:
+  name: expand
+  description: Beskriver om expanderade data ska hämtas för aktiviteten.
+  in: query
+  schema:
+    type: array
+    items:
+      type: string
+      enum: [child, group, registeredBy]

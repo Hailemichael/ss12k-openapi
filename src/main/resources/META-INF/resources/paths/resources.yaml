@@ -1,0 +1,87 @@
+resources:
+  get:
+    tags:
+      - Rum och resurser
+    summary: Hämta en lista med resurser.
+    parameters:
+      - name: owner
+        description: Begränsa urvalet till en viss organisation.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "searchParameters.yaml#/Sortkey"
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Resource.yaml#/Resources"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`, `owner`).
+          Kan inte kombineras med `pageToken`.
+
+resourcesLookup:
+  post:
+    tags:
+      - Rum och resurser
+    summary: Hämta många resurser baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta resurser en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många resurser
+      på en gång genom att ange POST:a en lista med önskade resurser.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Resource.yaml#/ResourcesArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref : "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+resourceById:
+  get:
+    tags:
+      - Rum och resurser
+    summary: Hämta en resurs baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för resursen som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Resource.yaml#/Resource"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Duty not found

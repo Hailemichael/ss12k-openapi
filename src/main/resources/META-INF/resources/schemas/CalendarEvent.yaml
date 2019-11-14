@@ -1,0 +1,166 @@
+CalendarEvent:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Identifierare för kalenderhändelsen.
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+    activity:
+      allOf:
+        - $ref: '/schemas/common.yaml#/ActivityReference'
+        - description: Den aktivitet kalenderhändelsen är kopplad till
+    startTime:
+      type: string
+      format: date-time
+      description: >
+        Kalenderhändelsens starttid med datum och tid
+        (RFC 3339 format tex "2015-12-12T10:30:00+01:00").
+    endTime:
+      type: string
+      format: date-time
+      description: >
+        Kalenderhändelsens sluttid med datum och tid
+        (RFC 3339 format tex "2015-12-12T10:30:00+01:00").
+    cancelled:
+      type: boolean
+      description: >
+        Inställd används för att ange att en planerad kalenderhändelse
+        inte ska äga rum till följd av en avbokning eller annan
+        tillfällig avvikelse. Förvalt värde är False.
+    teachingLengthTeacher:
+      type: integer
+      description: >
+        Faktisk undervisningstid för lärare anges i minuter.
+        Lärartiden kan vara kortare eller längre än tiden för kalenderhändelsen.
+    teachingLengthStudent:
+      type: integer
+      description: >
+        Faktisk undervisningstid för elever (och elever ingående i grupper).
+        Anges i minuter. Tiden kan vara kortare eller längre än tiden för
+        kalenderhändelsen, till exempel då en rast ingår i tiden.
+    comment:
+      type: string
+      description: En text med kompletterande information.
+    studentExceptions:
+      type: array
+      items:
+        type: object
+        title: StudentException
+        description: >
+          Anger avvikelser beträffande elevs deltagande,
+          tid och längd för ett enstaka kalendertillfälle.
+        properties:
+          student:
+            type: string
+            format: uuid
+            description: Referens till en person
+          participates:
+            type: boolean
+            description: >
+              Används för att ange om en elev deltar på ett visst kalendertillfälle.
+          startTime:
+            type: string
+            format: date-time
+            description: >
+              Starttid för undantaget (RFC 3339 format tex "2015-12-12T10:30:00+01:00").
+          endTime:
+            type: string
+            format: date-time
+            description: >
+              Sluttid för undantaget (RFC 3339 format tex "2015-12-12T11:00:00+01:00").
+          teachingLength:
+            type: integer
+            description: >
+              Undervisningstid i minuter för eleven. Om den ej anges så gäller det
+              som är angivet i, i första hand, CalendarEvent, och annars i Activity.
+        required:
+          - student
+          - participates
+    teacherExceptions:
+      type: array
+      items:
+        type: object
+        title: TeacherException
+        description: >
+          Anger avvikelser beträffande lärares ansvar, tid och längd
+          för ett enstaka kalendertillfälle.
+        properties:
+          duty:
+            type: string
+            format: uuid
+            description: Anger vilken anställning (Duty) undantaget avser.
+          participates:
+            type: boolean
+            description: >
+              Används för att ange om en lärare ska delta på ett visst kalendertillfälle.
+          startTime:
+            type: string
+            format: date-time
+            description: >
+              Starttid för undantaget
+              (RFC 3339 format tex "2015-12-12T10:30:00+01:00").
+          endTime:
+            type: string
+            format: date-time
+            description: >
+              Sluttid för undantaget
+              (RFC 3339 format tex "2015-12-12T10:30:00+01:00").
+          teachingLength:
+            type: integer
+            description: >
+              Undervisningstid i minuter för läraren. Om den ej anges så gäller det
+              som är angivet i, i första hand, CalendarEvent, och annars i Activity.
+        required:
+          - duty
+          - participates
+    rooms:
+        type: array
+        items:
+          allOf:
+            - $ref: '/schemas/common.yaml#/ObjectReference'
+            - title: RoomReference
+              description: Den lokal eller plats som är bokad för kalenderhändelsen.
+              required:
+                - id
+    resources:
+        type: array
+        items:
+          allOf:
+            - $ref: '/schemas/common.yaml#/ObjectReference'
+            - title: ResourceReference
+              description: En bokningsbar resurs som inte är en lokal.
+              required:
+                - id
+    _embedded:
+      type: object
+      properties:
+        activity:
+          $ref: "/schemas/Activity.yaml#/Activity"
+        attendance:
+          type: array
+          items:
+            $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+  required:
+    - id
+    - startTime
+    - endTime
+    - meta
+    - activity
+
+CalendarEvents:
+ type: object
+ properties:
+      data:
+        type: array
+        items:
+          $ref: "#/CalendarEvent"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+ required:
+    - data

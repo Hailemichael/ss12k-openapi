@@ -1,0 +1,222 @@
+openapi: 3.0.2
+#servers:
+#  - description: SS12000
+#    url: http://some.server.se/v2.0
+info:
+  description: >
+    This is an implementation specification of SS12000 v2
+    [TK450](https://www.sis.se/standardutveckling/tksidor/tk400499/sistk450/)
+  version: 2.0.0
+  title: SS12000
+  termsOfService: "https://www.sis.se/standardutveckling/tksidor/tk400499/sistk450/"
+  contact:
+    email: tk450@sis.se
+tags:
+  - name: Organisation
+    description: Skolans organisation och grundläggande administration.
+  - name: Person
+    description: Hanterar personer och personers relationer.
+  - name: Grupper
+    description: Grupper.
+  - name: Studieinformation
+    description: Information om kurser, ämnen, program och studieplaner.
+  - name: Aktiviteter
+    description: Aktiviteter knyter ihop lärare och elever med ämne eller kurs.
+  - name: Kalenderhändelser
+    description: Kalenderposter kopplat till aktiviteter
+  - name: Rum och resurser
+    description: Salar och resurser som kan schemaläggas.
+  - name: Närvaro
+    description: Information runt en elevs närvaro.
+  - name: Vistelseschema
+    description: Schema för omsorgstider på förskola eller fritidshem.
+  - name: Närvarohändelser
+    description: >
+      In- och utpassering. Används för närvarohantering i förskola och fritidshem
+      (utan kopplingar till kalenderhändelser).
+  - name: Borttag
+    description: Metod för att följa borttag av entititer.
+  - name: Prenumeration
+    description: Webhook för att prenumerera på uppdateringar.
+paths:
+  /organisations:
+    $ref: paths/organisations.yaml#/organisations
+  /organisations/lookup:
+    $ref: paths/organisations.yaml#/organisationsLookup
+  /organisations/{id}:
+    $ref: paths/organisations.yaml#/organisationById
+  /schoolUnits:
+    $ref: paths/schoolUnits.yaml#/schoolUnits
+  /schoolUnits/lookup:
+    $ref: paths/schoolUnits.yaml#/schoolUnitsLookup
+  /schoolUnits/{id}:
+    $ref: paths/schoolUnits.yaml#/schoolUnitById
+  /persons:
+    $ref: paths/persons.yaml#/persons
+  /persons/lookup:
+    $ref: paths/persons.yaml#/personsLookup
+  /persons/{id}:
+    $ref: paths/persons.yaml#/personsById
+  /placements:
+    $ref: paths/placements.yaml#/placements
+  /placements/lookup:
+    $ref: paths/placements.yaml#/placementsLookup
+  /placements/{id}:
+    $ref: paths/placements.yaml#/placementsById
+  /duties:
+    $ref: paths/duties.yaml#/duties
+  /duties/lookup:
+    $ref: paths/duties.yaml#/dutiesLookup
+  /duties/{id}:
+    $ref: paths/duties.yaml#/duty_by_id
+  /studentGroups:
+    $ref: paths/studentGroups.yaml#/studentGroups
+  /studentGroups/lookup:
+    $ref: paths/studentGroups.yaml#/studentGroupsLookup
+  /studentGroups/{id}:
+    $ref: paths/studentGroups.yaml#/studentGroupsById
+  /programmes:
+    $ref: paths/programmes.yaml#/programmes
+  /programmes/lookup:
+    $ref: paths/programmes.yaml#/programmesLookup
+  /programmes/{id}:
+    $ref: paths/programmes.yaml#/programmeById
+  /studyplans:
+    $ref: paths/studyPlans.yaml#/studyPlans
+  /studyplans/{id}:
+    $ref: paths/studyPlans.yaml#/studyPlanById
+  /syllabuses:
+    $ref: paths/syllabuses.yaml#/syllabuses
+  /syllabuses/lookup:
+    $ref: paths/syllabuses.yaml#/syllabusesLookup
+  /syllabuses/{id}:
+    $ref: paths/syllabuses.yaml#/syllabusById
+  /schoolUnitOfferings:
+    $ref: paths/schoolUnitOfferings.yaml#/schoolUnitOfferings
+  /schoolUnitOfferings/lookup:
+    $ref: paths/schoolUnitOfferings.yaml#/schoolUnitOfferingsLookup
+  /schoolUnitOfferings/{id}:
+    $ref: paths/schoolUnitOfferings.yaml#/schoolUnitOfferingById
+  /activities:
+    $ref: paths/activities.yaml#/activities
+  /activities/lookup:
+    $ref: paths/activities.yaml#/activitiesLookup
+  /activities/{id}:
+    $ref: paths/activities.yaml#/activityById
+  /calendarEvents:
+    $ref: paths/calendarEvents.yaml#/calendarEvents
+  /calendarEvents/{id}:
+    $ref: paths/calendarEvents.yaml#/calendarEventById
+  /attendances:
+    $ref: paths/attendances.yaml#/attendances
+  /attendances/lookup:
+    $ref: paths/attendances.yaml#/attendancesLookup
+  /attendances/{id}:
+    $ref: paths/attendances.yaml#/attendanceById
+  /attendanceEvents:
+    $ref: paths/attendanceEvents.yaml#/attendance_events
+  /attendanceEvents/{id}:
+    $ref: paths/attendanceEvents.yaml#/attendance_events_by_id
+  /attendanceSchedule:
+    $ref: paths/attendanceSchedules.yaml#/attendanceSchedules
+  /attendanceSchedule/{id}:
+    $ref: paths/attendanceSchedules.yaml#/attendanceSchedulesById
+  /attendanceSchedule/lookup:
+    $ref: paths/attendanceSchedules.yaml#/attendanceSchedulesLookup
+  /grades:
+    $ref: paths/grades.yaml#/grades
+  /grades/lookup:
+    $ref: paths/grades.yaml#/gradesLookup
+  /grades/{id}:
+    $ref: paths/grades.yaml#/gradeById
+  /absences:
+    $ref: paths/absences.yaml#/absences
+  /absences/lookup:
+    $ref: paths/absences.yaml#/AbsenceLookup
+  /absences/{id}:
+    $ref: paths/absences.yaml#/absence_by_id
+  /aggregatedAttendance:
+    $ref: paths/aggregatedAttendances.yaml
+  /resources:
+    $ref: paths/resources.yaml#/resources
+  /resources/lookup:
+    $ref: paths/resources.yaml#/resourcesLookup
+  /resources/{id}:
+    $ref: paths/resources.yaml#/resourceById
+  /rooms:
+    $ref: paths/rooms.yaml#/rooms
+  /rooms/lookup:
+    $ref: paths/rooms.yaml#/roomsLookup
+  /rooms/{id}:
+    $ref: paths/rooms.yaml#/roomById
+  /subscriptions:
+    $ref: paths/subscriptions.yaml#/subscriptions
+  /subscriptions/{id}:
+    $ref: paths/subscriptions.yaml#/subscription_by_id
+  /deletedEntities:
+    $ref: paths/deletedEntities.yaml#/deletedEntities
+
+externalDocs:
+  description: För mer information hämtas från SIS - TK450
+  url: "https://sis.se/standardutveckling/tksidor/tk400499/sistk450/"
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Organisation:
+      $ref: "/schemas/Organisation.yaml#/Organisation"
+    SchoolUnit:
+      $ref: "/schemas/SchoolUnit.yaml#/SchoolUnit"
+    Person:
+      $ref: "/schemas/Person.yaml#/Person"
+    Duty:
+      $ref: "/schemas/Duty.yaml#/Duty"
+    StudentGroup:
+      $ref: "/schemas/StudentGroup.yaml#/StudentGroup"
+    Programme:
+      $ref: "/schemas/Programme.yaml#/Programme"
+    Syllabus:
+      $ref: "/schemas/Syllabus.yaml#/Syllabus"
+    SchoolUnitOffering:
+      $ref: "/schemas/SchoolUnitOffering.yaml#/SchoolUnitOffering"
+    StudyPlan:
+      $ref: "/schemas/StudyPlan.yaml#/StudyPlan"
+    Activity:
+      $ref: "/schemas/Activity.yaml#/Activity"
+    CalendarEvent:
+      $ref: "/schemas/CalendarEvent.yaml#/CalendarEvent"
+    Attendance:
+      $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+    AttendanceEvent:
+      $ref: "/schemas/AttendanceEvent.yaml#/AttendanceEvent"
+    AttendanceSchedule:
+      $ref: "/schemas/AttendanceSchedule.yaml#/AttendanceSchedule"
+    Absence:
+      $ref: "/schemas/Absence.yaml#/Absence"
+    AggregatedAttendance:
+      $ref: "/schemas/AggregatedAttendance.yaml#/AggregatedAttendance"
+    Grade:
+      $ref: "/schemas/Grade.yaml#/Grade"
+    Resource:
+      $ref: "/schemas/Resource.yaml#/Resource"
+    Room:
+      $ref: "/schemas/Room.yaml#/Room"
+    Subscription:
+      $ref: "/schemas/Subscription.yaml#/Subscription"
+  parameters:
+    FilterParam:
+      in: query
+      name: filter
+      required: false
+      schema:
+        type: string
+      description: >-
+        Filters according to
+        [RFC7644](https://tools.ietf.org/html/rfc7644#section-3.4.2.2).
+
+security:
+  - BearerAuth: []

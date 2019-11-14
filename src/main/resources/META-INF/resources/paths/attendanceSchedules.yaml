@@ -1,0 +1,159 @@
+attendanceSchedules:
+  get:
+    tags:
+      - Vistelseschema
+    summary: Returnerar registrerade vistelsescheman.
+    parameters:
+      - name: placement
+        description: Begränsa urvalet till scheman för utpekade placeringar.
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+      - name: startDate.onOrAfter
+        description: >
+          Begränsa urvalet till vistelseschema som är aktiva inom det
+          intervall som startar på angivet datum
+          (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: endDate.onOrBefore
+        description: >
+          Begränsa urvalet till vistelseschema som är aktiva inom det
+          intervall som avslutas på angivet datum
+          (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+                $ref: "/schemas/AttendanceSchedule.yaml#/AttendanceSchedules"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`, `child`, `group`).
+          Kan inte kombineras med `pageToken`.
+
+
+  post:
+    tags:
+      - Vistelseschema
+    summary: Registrera ett nytt vistelseschema.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/AttendanceSchedule.yaml#/AttendanceSchedule"
+
+    responses:
+      "200":
+        description: Posten skapad.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AttendanceSchedule.yaml#/AttendanceSchedule"
+      default:
+        description: unexpected error
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AttendanceSchedule.yaml#/Error"
+
+attendanceSchedulesLookup:
+  post:
+    tags:
+      - Vistelseschema
+    summary: Hämta många vistelsescheman baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta vistelsescheman ett i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många vistelsescheman
+      på en gång genom att ange POST:a en lista med önskade vistelsescheman.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Activity.yaml#/ActivitiesArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref : "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+attendanceSchedulesById:
+  get:
+    tags:
+        - Vistelseschema
+    summary: Hämta ett vistelseschema utifrån ID.
+    parameters:
+      - name: id
+        description: Id för vistelseschema att hämta.
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: Posten returneras.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AttendanceSchedule.yaml#/AttendanceSchedule"
+      "400":
+        description: Felaktigt id.
+      "403":
+        description: Otilläckliga rättigheter.
+      "404":
+        description: Posten hitades inte.
+      default:
+        description: Okänt fel.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/AttendanceSchedule.yaml#/Error"
+  delete:
+    tags:
+        - Vistelseschema
+    summary: Ta bort ett vistelseschema.
+    parameters:
+      - name: id
+        in: path
+        description: ID för vistelseschema som ska tas bort.
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      "204":
+        description: Post borttagen.
+      "400":
+        description: Felaktigt id.
+      "403":
+        description: Otilläckliga rättigheter.
+      "404":
+        description: Posten hittades inte.

@@ -1,0 +1,260 @@
+# Ola
+
+aktiviteter behöver rätt mycket filter
+- person      [klart]
+- skolenhet   [klart]
+(referens till modellobjekt felaktigt)
+
+vi behöbver komma överens om huruvida vi ska ha en elev
+som vi lägger på grupper mm istället för personen.
+
+
+
+- calendareEvents måste ha ett startdatum, required.
+  och optional[fel] slutdatum.  [klart]
+
+calendarEvents på id? svårt att se användarfallet? lägger in som endpoint.
+inte filter
+(calenderEvents på id, hade massor av parameterar; dessa är borttagna [klart])
+
+# Jonas
+
+generellt sett, när vi POSTAR för att hämta många ID:n, så lägger vi på
+/persons/filter som vi POST:ar på. opch deå kan man bara filtrerar på ID:n
+
+ /filter paths 
+        - Activity [klart]
+        - AggregatedAttendance  ?
+        - AttendanceEvent ?
+        - CalendarEvent [ska inte ha någon sådan]
+        - AttendanceSchedule ?
+        - Duty [klart]
+        - Grade [klart]
+        - LeaveOfAbsence [klart]
+        - Organisation [klart]
+        - Person [klart]
+        - Programme klart]
+        - Resource [klart]
+        - Room [klart]
+        - SchoolUnit [klart]
+        - SchoolUnitOffering [] (känns fel på något sätt)
+        - Syllabus [klart]
+        - Attendance [klart]
+        - StudyPlan (saknas)
+        - Studentgroup [klart]
+
+rimligt att kunna hitta avvikelser i attendance
+
+leave of absence bör har filter på type [klart]
+leaveofabsence bör ha post för att skapa nya rader  [klart]
+
+enum centraliseras till /schemas/common.yaml
+
+# Palle
+camelCase
+
+justera ordningen så den motsvazrar trädet [klart]
+
+organisation: parent som filter [klart]
+
+organisation kanske skulle kunna slås ihop med skolUnitGroup (skola)
+man vill kunna schemalägga på skolan fast det ställer till det. [klart]
+
+Beslut:
+schoolUnitGroup försvinner som eget object och ersätts med organisation
+organisation får en type
+inget startdatum trots att det kanske vore bra...men det blir för komplicerat
+[klart]
+
+vi bör beskriva vilken information som fås ut avseende aktuella/historiska data
+
+vi tror att vi inte behöver kunna filtrera på program för personer
+
+resource och room ligger numera på organisation, vilket gör att vi bör kunna filtrera på organisation. [klart]
+dessutom rimligtvis på namn? [nej]
+
+
+schoolunitofferings har inget eget id, vilket är korrekt
+däremot måste man kunna filtera på skolenhet [klart]
+och kanske andra saker [nej]
+
+schoolUnits bör kunna filtreras på organisation, kommunkod och skolform [klart]
+
+är maximum för limit rimlig?
+
+# Jonas
+
+rensa read-only
+
+
+studentgroup bör kunna filteraras på [klart]
+- studentgrouptype
+- schooltype
+- schoolunit
+- startdate < >
+- enddate  < >
+
+
+subsriptions måste förklaras ordentligt i löptext. exempel, varför,
+hur länge förväntas man försöka igen mm. hur mycket klienten ska kunna
+hantera
+
+
+obegripligt vad skillnaden är mellan
+attendanceEvent och attendance
+attendanceEvent är "in- och utpassering". finns det en bra synonym
+på engelska?
+
+meta saknas i vissa.
+
+tags på alla pather
+
+kopiera kompletta beskrivningar från dokumentet till yaml
+
+organisation kanske skulle heta organisational unit? jfr OU.
+
+
+
+
+Ändringar i dokumentet:
+Organisation, kolla descriptions från yaml och jämka.
+Organisation, ändra displayName -> namn PÅ organsationen.
+
+
+Duty ska ha AssignmentRoles lista. För studentgroup finns den...?
+
+
+skolform parameteriserar/refereras från studentgroup, minst
+
+
+duty refereras till 
+
+subjectDesignation är ett obegripligt ord.
+
+
+xor mellan syllabus och programme i SchoolUnitOffwering
+
+yaml är korrekt avseende studieplan, dok och diagram fixas
+
+
+kolla enum för aktivitetstyp återkommer och gör i så fall reference
+
+
+vi behöver kunna få ut vilka grupper en person är med i,
+resp vilka aktiviteter
+
+
+koppla rum och resurser till calendarEvent.
+
+vi har lagt till owner med exakt "1"
+
+child är kanske inte bästa attributnamnet när vi hänvisar till en placering i förskolan?
+hopblandning med det expanderade person-objektet
+
+
+sjukanmälan bör kunna göras
+
+LeaveOfAbsence bör ha en status:
+ - ansökt
+ - avslagen
+ - beviljad
+och *INGEN* frånvaroTyp. sjukanmälan, se ovan.
+
+
+
+
+### möten med olika teman:
+
+- autentisering
+- prenumerationer / pubsub
+- scenarier
+- yaml färdigställa
+- generellt möte om detaljer såsom värdförråd mm
+
+Palle har ett förs
+
+
+är det rimligt att för "/attendances"
+
+    "student": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "reportedBy": {
+      "displayName": "string",
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+
+
+dvs  att elkeven för närvaro inte har namn men reportedBy har namn?
+vårt förslag är att inga displaynames finns där dessutum
+
+Ordna sortkey:
+
+Palle (några redan gjorda gemensamt):
+
+absences.yaml
+activities.yaml
+aggregatedAttendances.yaml
+attendances.yaml
+calendarEvents.yaml
+childCareAttendanceEvents.yaml
+childcareSchedule.yaml
+deletedEntities.yaml
+
+Ola
+
+duties.yaml [x]
+grades.yaml [x]
+organisations.yaml [x]
+schoolUnitOfferings.yaml
+schoolUnits.yaml [x]
+
+Jonas
+
+persons.yaml [x]
+placements.yaml [x]
+programmes.yaml [x]
+resources.yaml [x]
+rooms.yaml [x]
+
+Stefan
+searchParameters.yaml
+studentGroups.yaml
+studyPlans.yaml
+subscriptions.yaml
+syllabuses.yaml
+
+startTime o endTime i paths/calendarEvents är inte tydliga, from, tom?
+
+deletedEntities, det borde kanske vara plural i namnen på vektorerna, och kanske en tidstämpel med varje rad, möjligen?
+
+
+
+synka eppn typ med dokumentet (ingen vhavarE)
+
+pagetoken bör enklast bara läggas till som extra parameter, inte exkludera användandet av andra parametrar.
+
+
+att "hämta en lista av prenumerationer" är rätt otydligt, vad sjutton menas?
+Bara just mina? Andras? Är det rimligt att ha pageToken där, lär ju knappast
+bli så långa listor?
+
+
+grade saknar ID i dokumentet...
+
+generellt så harr diagrammet  ofta 1...* när det är exakt ett i dokumentet och i yaml
+
+id : int för AttendanceSchedule i diagrammet
+
+
+synka code_objectType med dokumentet. (används för subscriptions)
+
+
+
+
+
+Från html:
+Radera:
+
+USage  and SKD samnples
+Scopes
+Parameters
+

@@ -1,0 +1,103 @@
+calendarEvents:
+  get:
+    tags:
+      - Kalenderhändelser
+    summary: Returnerar kalenderhändelser utifrån en aktivitet eller student.
+    parameters:
+      - name: startTime
+        description: >
+          Hämta kalenderhändelser från och med denna tidpunkt
+          (RFC 3339 format, t.ex. "2016-10-15T09:00:00+02:00").
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - name: endTime
+        description: >
+          Hämta kalenderhändelser till och med denna tidpunkt
+          (RFC 3339 format, t.ex. "2016-10-15T11:00:00+02:00").
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: activity
+        description: Begränsa urvalet till utpekade aktiviteters ID.
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+      - name: student
+        description: Begränsa urvalet till utpekade studenters ID.
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        description: Anger hur resultatet ska sorteras.
+        in: query
+        schema:
+          type: string
+          enum:
+            - ModifiedDesc
+            - StartTimeAsc
+            - StartTimeDesc
+          default: ModifiedDesc
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/CalendarEvent.yaml#/CalendarEvents"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`, `startTime`,
+          `endTime`, `activity`,`student`). Kan inte kombineras med `pageToken`.
+
+calendarEventById:
+  get:
+    tags:
+      - Kalenderhändelser
+    summary: Returnerar en kalenderhändelse utifrån ID
+    parameters:
+      - name: id
+        description: Hämta en kalenderhändelse.
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/CalendarEvent.yaml#/CalendarEvent"
+
+ExpandParameter:
+  name: expand
+  description: Beskriver om expanderade data ska hämtas för aktiviteten.
+  in: query
+  schema:
+    type: array
+    items:
+      type: string
+      enum: [activity, attendance]

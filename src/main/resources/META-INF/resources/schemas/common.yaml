@@ -1,0 +1,261 @@
+ObjectReference:
+  title: ObjectReference
+  type: object
+  required:
+    - id
+  properties:
+    id:
+      type: string
+      format: uuid
+    displayName:
+      type: string
+      readOnly: true
+      description: >
+        Namn för visningsyfte för det refererade objektet.
+        Skall endast returneras när query parametern
+        `expandReferenceNames` är satt till "true".
+
+Meta:
+  title: Meta
+  type: object
+  readOnly: true
+  properties:
+    created:
+      type: string
+      format: date-time
+      description: >
+        Datum och tid för när entiteten skapades
+        (RFC 3339 format tex "2015-12-12T10:30:00+01:00").
+    modified:
+      type: string
+      format: date-time
+      description: >
+        Datum och tid för när entiteten senast uppdaterades
+        (RFC 3339 format tex "2015-12-12T10:30:00+01:00").
+
+SchoolUnitReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: SchoolUnitReference
+      description: Referens till skolenhet
+
+ProgrammeReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - description: Identifierare för program (Programme)
+      title: ProgrammeReference
+
+OrganisationReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: OrganisationReference
+      description: Referens till ett organisationselement
+
+ActivityReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: ActivityReference
+      description: Referens till en aktivitet
+
+PersonReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: PersonReference
+      description: Referens till en person
+
+PlacementReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: PlacementReference
+      description: Referens till en placering
+
+StudentGroupReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: StudentGroupReference
+      description: Referens till en elevgrupp
+
+SyllabusReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: SyllabusReference
+      description: Referens till en Syllabus
+
+DutyReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: DutyReference
+      description: Referens till en Duty
+
+CalendarEventReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - title: CalendarEventReference
+      description: Referens till en kalenderhändelse
+
+DateConstrainedObjectReference:
+  allOf:
+    - $ref: "/schemas/common.yaml#/ObjectReference"
+    - type: object
+      title: DateConstrainedObjectReference
+      required:
+        - startDate
+        - endDate
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+
+components:
+  schemas:
+    EndPointsEnum:
+      title: Code_ObjectType
+      type: string
+      enum:
+        - Absence
+        - AttendanceEvent
+        - Attendance
+        - Grade
+        - CalendarEvent
+        - AttendanceSchedule
+        - Resource
+        - Room
+        - Activity
+        - Duty
+        - Placement
+        - StudyPlan
+        - Programme
+        - Syllabus
+        - SchoolUnitOffering
+        - StudentGroup
+        - Person
+        - SchoolUnit
+        - Organisation
+
+    SchoolTypesEnum:
+      title: Code_SchoolType
+      type: string
+      enum:
+        - FS
+        - FKLASS
+        - FTH
+        - OPPFTH
+        - GR
+        - GRS
+        - SP
+        - SAM
+        - GY
+        - GYS
+        - KOMVUX
+        - SARVUX
+        - SFI
+        - YH
+        - FHS
+        - HS
+        - AU
+
+    RelationTypesEnum:
+      type: string
+      title: Code_RelationType
+      description: |
+        Värdeförråd för olika typer av relationer till en elev.
+      enum:
+        - Vårdnadshavare
+        - Annan ansvarig
+        - God man
+        - Utsedd behörig
+
+    AbsenceEnum:
+      type: string
+      title: Code_AbsenceType
+      enum:
+        - Beviljad ledighet
+        - Anmäld frånvaro
+
+    CurriculumEnum:
+      type: string
+      title: Code_Curriculum
+      enum:
+        - Lgy70
+        - Lgr80
+        - Lpo94
+        - Lpf94
+        - Lpfö98
+        - GR2000
+        - GY2000
+        - GYSÄR2000
+        - GYVUX2000
+        - GYVUX2001
+        - GYVUX2002
+        - GR2011
+        - GRSÄR2011
+        - SPEC2011
+        - SAM2011
+        - Lvux12
+        - GY2011
+        - GYSÄR2013
+        - VU2013
+
+    StudentGroupTypesEnum:
+      type: string
+      title: Code_StudentGroupType
+      description: |
+        Grupptyp anger vad en grupp ska användas till.
+        Ett värdeförråd för att indikera anger vilka grupptyper som finns.
+        * _Undervisning_ - Undervisningsgruppen är en elevgrupp som har koppling
+          till ett ämne eller en kurs, och som ska schemaläggas med undervisningstid
+          ihop med en lärare.
+        * _Klass_ - Klassen är en organisatorisk grupp med elever som är skolplacerade
+          på en skola med skolform FSK, GR, GRS, SP, SAM, GY eller GYS.
+          Varje elev ska vara placerad i endast en klass. Klassen kan schemaläggas
+          med undervisning enligt timplan.
+        * _Schema_ - Schemagrupper är elevgrupper som utgör ett komplement till
+          grupper av typen Undervisning. Schemagrupper ska schemaläggas för att
+          åstadkomma anpassningar av schemat för enskilda elever eller grupper
+          av elever. Exempel på schemagrupper är delgrupper och grupper som
+          används för stödundervisning eller läxhjälp.
+        * _Avdelning_ - Avdelningen är en elevgrupp för placering inom skolformerna
+          förskola eller fritidshem.
+        * _Övrigt_ - Övriga grupper är andra grupper som inte är något av ovanstående.
+      enum:
+        - Undervisning
+        - Klass
+        - Mentor
+        - Schema
+        - Övrigt
+
+    DutyRole:
+      type: string
+      title: Code_DutyRole
+      enum:
+        - Rektor
+        - Lärare
+        - Förskollärare
+        - Övrig pedagogisk personal
+        - Förskolechef
+        - Annan personal
+
+    AssignmentRoleTypeEnum:
+      title: Code_AssignmentRole
+      type: string
+      enum:
+        - Mentor
+        - Förskollärare
+        - Barnskötare
+        - Fritidspedagog
+        - Specialpedagog
+        - Elevhälsopersonal
+        - Pedagogisk ledare
+        - Schemaläggare
+
+    IdLookup:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+            format: uuid

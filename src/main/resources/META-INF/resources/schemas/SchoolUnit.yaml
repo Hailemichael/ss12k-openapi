@@ -1,0 +1,77 @@
+SchoolUnit:
+  type: object
+  title: SchoolUnit
+  description: >
+    En Skolenhet, i förekommande fall med skolenhetskod
+    enligt Skolenhetsregistret.
+  properties:
+    id:
+      type: string
+      format: uuid
+
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+    organisation:
+      allOf:
+        - $ref: "/schemas/common.yaml#/ObjectReference"
+        - title: OrganisationReference
+          description: Organisationstillhörighet.
+    displayName:
+      type: string
+      description: Namn för skolenheten.
+    schoolUnitCode:
+      type: string
+      description: >
+        Skolenhetskod. Identifierare för skolenheten enligt Skolverket.
+        Används för de skolformer där skolverket bestämmer en
+        skolenhetskod för varje enhet.
+    schoolTypes:
+      type: array
+      uniqueItems: true
+      minItems: 1
+      items:
+        $ref: "/schemas/common.yaml#/components/schemas/SchoolTypesEnum"
+    municipalityCode:
+      type: string
+      description: >
+        Kommunkod. Län och kommunkod för den kommun där skolan är belägen,
+        exempelvis 0180 där 01 anger länet och 80 anger kommunen.
+    startDate:
+      type: string
+      format: date
+      description: >
+        Startdatum för skolenhetens giltighetstid
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    endDate:
+      type: string
+      format: date
+      description: >
+        Slutdatum för skolenhetens giltighetstid
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+  required:
+    - id
+    - meta
+    - organisation
+    - displayName
+    - schoolTypes
+
+SchoolUnitsArray:
+        type: array
+        items:
+          $ref: "#/SchoolUnit"
+
+SchoolUnits:
+ type: object
+ properties:
+      data:
+        type: array
+        items:
+          $ref: "#/SchoolUnit"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+ required:
+    - data

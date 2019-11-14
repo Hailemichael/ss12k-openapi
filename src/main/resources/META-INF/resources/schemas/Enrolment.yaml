@@ -1,0 +1,48 @@
+Enrolment:
+  title: Enrolment
+  type: object
+  properties:
+    enroledAt:
+      type: string
+      format: uuid
+      description: Identifierare för skolenheten där eleven är inskriven.
+    schoolYear:
+      type: integer
+      description: >
+        Värdet årskurs anger det år efter skolstarten
+        för vilket en student följer undervisningen.
+      minimum: 0
+      maximum: 10
+    schoolType:
+      $ref: "/schemas/common.yaml#/components/schemas/SchoolTypesEnum"
+    startDate:
+      type: string
+      format: date
+      description: >
+        Startdatum för inskrivningen
+        (RFC 3339-format, t.ex. "2016-10-15").Inkluderande.
+    endDate:
+      type: string
+      format: date
+      description: >
+        Slutdatum för inskrivningen
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    educationCode:
+      type: string
+      description: Studievägskod för den aktuella inskrivningen.
+    programme:
+      type: string
+      format: uuid
+      description: >
+        Identifierare för ett program/inriktining eller yrkesutgång
+        (_Programme_) eleven läser.
+    specification:
+      type: string
+      description: >
+        Kompletterande information angående innehåll i elevens utbildning,
+        används som avgränsning av ett visst utbildningsalternativ
+        för exempelvis lärlingsutbildning.
+  required:
+    - enroledAt
+    - schoolType
+    - startDate

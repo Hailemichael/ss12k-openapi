@@ -1,0 +1,161 @@
+absences:
+  get:
+    tags:
+      - Närvaro
+    summary: >
+      Hämta en lista av beviljad ledighet och anmäld frånvaro.
+    parameters:
+      - name: schoolUnit
+        description: >
+          Begränsa urvalet till den frånvaro/ledighet som är kopplad till skolenheten.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: student
+        description: >
+          Begränsa urvalet till den frånvaro/ledighet som är kopplad till eleven
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: registeredBy
+        description: >
+          Begränsa urvalet till den frånvaro/ledighet som är registrerad av personen
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: type
+        description: Begränsa urvalet till den frånvaro/ledighet som är av angiven typ
+        in: query
+        schema:
+          type: string
+          $ref: "/schemas/common.yaml#/components/schemas/AbsenceEnum"
+      - name: startTime.before
+        description: >
+          Endast anmälda frånvaro som startar innan eller på denna tidpunkt
+          (RFC 3339 format, tex "2015-12-12T10:30:00+01:00"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: startTime.after
+        description: >
+          Endast anmälda frånvaro/ledighet som startar efter denna tidpunkt
+          (RFC 3339 format, tex "2015-12-12T10:30:00+01:00"). Exkluderande.
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        description: Anger hur resultatet ska sorteras.
+        in: query
+        schema:
+          type: string
+          enum:
+            - ModifiedDesc
+            - StartTimeAsc
+            - StartTimeDesc
+          default: ModifiedDesc
+
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Absence.yaml#/Absences"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`,   `expand`,`schoolUnit`,
+          `student`,`registeredBy`,`type`, `startTime.before`, `startTime.after`)
+          kan inte kombineras med `pageToken`
+
+  post:
+    tags:
+      - Närvaro
+    summary: Registrera en ny anmäld frånvaropost eller beviljad ledighet
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/Absence.yaml#/Absence"
+    responses:
+      200:
+        description: Posten skapad.
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Absence.yaml#/Absence"
+      default:
+        description: unexpected error
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Absence.yaml#/Error"
+
+AbsenceLookup:
+  post:
+    tags:
+      - Närvaro
+    summary: Hämta många anmälda frånvaroposter baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta anmälda frånvaro en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många anmälda
+      frånvaroposter på en gång genom att ange POST:a en lista med
+      önskade objekt.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Absence.yaml#/AbsencesArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+absence_by_id:
+  get:
+    tags:
+      - Närvaro
+    summary: Hämta anmäld frånvaro baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för anmäld frånvaro som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Absence.yaml#/Absence"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Duty not found

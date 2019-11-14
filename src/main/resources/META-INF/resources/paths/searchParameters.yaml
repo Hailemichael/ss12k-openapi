@@ -1,0 +1,88 @@
+SearchCreatedAfter:
+  name: meta.created.after
+  description: >
+    Endast poster skapade efter detta timestamp
+    (RFC 3339 format, tex "2015-12-12T10:30:00+01:00"). Exkluderande.
+  in: query
+  schema:
+    type: string
+    format: date-time
+
+SearchCreatedBefore:
+  name: meta.created.before
+  description: >
+    Endast poster skapade på eller före detta timestamp
+    (RFC 3339 format, tex "2015-12-12T10:30:00+01:00"). Inkluderande.
+  in: query
+  schema:
+    type: string
+    format: date-time
+
+SearchModifiedAfter:
+  name: meta.modified.after
+  description: >
+    Endast poster modifierade efter detta timestamp
+    (RFC 3339 format, tex "2015-12-12T10:30:00+01:00"). Exkluderande.
+  in: query
+  schema:
+    type: string
+    format: date-time
+
+SearchModifiedBefore:
+  name: meta.modified.before
+  description: >
+    Endast poster modifierade på eller före detta timestamp
+    (RFC 3339 format, tex "2015-12-12T10:30:00+01:00"). Inkluderande.
+  in: query
+  schema:
+    type: string
+    format: date-time
+
+ExpandReferenceNames:
+  name: expandReferenceNames
+  description: Returnera `displayName` för alla refererade objekt.
+  in: query
+  schema:
+    type: boolean
+
+Sortkey:
+  in: query
+  name: sortkey
+  schema:
+    type: string
+    enum:
+      - DisplayNameAsc
+      - ModifiedDesc
+    default: ModifiedDesc
+
+Offset:
+  in: query
+  name: offset
+  schema:
+    type: integer
+    minimum: 0
+    default: 0
+  required: false
+  description: >
+    Antal poster, från början av listan, som ska hoppas över
+    innan resultatet börjar presenteras.
+
+PageToken:
+  in: query
+  name: pageToken
+  schema:
+    type: string
+  description: >
+    Ett opakt värde som servern givit som svar på en tidigare ställd fråga.
+    Kan inte komibineras med andra filter men väl med `limit`.
+
+Limit:
+  in: query
+  name: limit
+  schema:
+    type: integer
+    minimum: 1
+  required: false
+  description: >
+    Antal poster som ska visas i resultatet. Utelämnas det så returnas
+    så många poster som möjligt av servern, se `pageToken`.

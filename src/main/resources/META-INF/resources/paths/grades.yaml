@@ -1,0 +1,132 @@
+grades:
+  get:
+    tags:
+      - Betyg
+    summary: Hämta en lista med betyg.
+    parameters:
+      - name: schoolUnit
+        description: Begränsa urvalet till de betyg som är kopplade till skolenhet.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: student
+        description: Begränsa urvalet till de betyg som tillhör eleven
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: registeredBy
+        description: Begränsa urvalet till de betyg som är registrerade av personen
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: gradingTeacher
+        description: Begränsa urvalet till de betyg som är utfärdade av ansvarig lärare
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: registeredDate.onOrAfter
+        description: >
+          Begränsa urvalet av betyg till de som är registerade inom det intervall
+          som startar på angivet datum (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: registeredDate.onOrBefore
+        description: >
+          Begränsa urvalet av betyg till de som är registerade inom det intervall
+          som slutar på angivet datum (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        description: Anger hur resultatet ska sorteras.
+        in: query
+        schema:
+          type: string
+          enum:
+            - registeredDateAsc
+            - registeredDateDesc
+            - ModifiedDesc
+          default: ModifiedDesc
+
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Grade.yaml#/Grades"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`, `schoolUnit`,
+          `student`, `registeredBy`,`gradingTeacher`,`registeredDate.onOrAfter`,
+          `registeredDate.onOrBefore`). Kan inte kombineras med `pageToken`.
+
+gradesLookup:
+  post:
+    tags:
+      - Betyg
+    summary: Hämta många betyg baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta betyg ett i taget med en loop a GET-anrop
+      så finns det även möjlighet att hämta många betyg på en gång genom
+      att ange POST:a en lista med önskade objekt.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Grade.yaml#/GradesArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+gradeById:
+  get:
+    tags:
+      - Betyg
+    summary: Hämta betyg baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för betyg som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Grade.yaml#/Grade"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Duty not found

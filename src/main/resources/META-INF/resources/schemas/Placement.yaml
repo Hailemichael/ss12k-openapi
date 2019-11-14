@@ -1,0 +1,82 @@
+Placement:
+  type: object
+  title: Placement
+  properties:
+    id:
+      type: string
+      format: uuid
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+    placedAt:
+      type: string
+      format: uuid
+      description: Identifierare för (för)skolenheten där eleven är placerad.
+    studentGroup:
+      allOf:
+        - $ref: "/schemas/common.yaml#/StudentGroupReference"
+        - description: Barngrupp eller avdelning knutet till denna placering.
+    child:
+      allOf:
+        - $ref: "/schemas/common.yaml#/PersonReference"
+        - description: Identifierare av person som placeringen avser.
+    owners:
+      type: array
+      description: >
+        En lista med identifierare för de personer som äger placeringen.
+        Används primärt för att styra vilka som skall kunna se och lägga schema.
+      items:
+        $ref: "/schemas/common.yaml#/PersonReference"
+    schoolType:
+      type: string
+      title: Code_SchoolType
+      description: Skolform för placeringen, förskola eller fritidshem
+      enum:
+        - FS
+        - FTH
+        - OPPFTH
+    startDate:
+      type: string
+      format: date
+      description: >
+        Startdatum för placeringen
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    endDate:
+      type: string
+      format: date
+      description: >
+        Slutdatum för placeringen
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    reason:
+      type: string
+      title: Code_Reason
+      description: En kod för att beskriva orsak för placeringen.
+      enum:
+        - Omsorg
+        - Erbjuden tid
+        - Eget behov
+    maxWeeklyScheduleHours:
+      type: integer
+      description: Anger maximal schematid per vecka för barnets placering.
+
+
+PlacementsArray:
+ type: array
+ items:
+    $ref: "#/Placement"
+
+Placements:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/Placement"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data
+

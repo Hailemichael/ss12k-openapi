@@ -1,0 +1,80 @@
+AggregatedAttendance:
+  type: object
+  title: AggregatedAttendance
+  properties:
+    activity:
+     $ref: "/schemas/common.yaml#/ActivityReference"
+    student:
+      allOf:
+        - $ref: "/schemas/common.yaml#/PersonReference"
+        - description: Referens till eleven
+    startDate:
+      type: string
+      format: date
+      description: >
+        Startdatum för den aggregerade närvaron
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    endDate:
+      type: string
+      format: date
+      description: >
+        Slutdatum för den aggregerade närvaron
+        (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+    attendanceSum:
+      type: integer
+      description: >
+        Summerad tid i minuter för elevens närvaro på kalenderhändelser.
+    validAbsenceSum:
+      type: integer
+      description: >
+        Summerad tid i minuter för elevens giltiga frånvaro på kalenderhändelser.
+    invalidAbsenceSum:
+      type: integer
+      description: >
+        Summerad tid i minuter för elevens ogiltiga frånvaro på kalenderhändelser.
+    otherAttendanceSum:
+      type: integer
+      description: >
+        Summerad tid i minuter för elevens deltagande i annan skolaktivitet,
+        såsom elevråd, i stället för deltagande på kalenderhändelser.
+    reportedSum:
+      type: integer
+      description: >
+        Summerad tid i minuter för alla elevens kalenderhändelser där läraren
+        eller annan personal har markerat lektionen som färdigrapporterad.
+    offeredSum:
+      type: integer
+      description: >
+        Summerad tid i minuter för alla kalenderhändelser
+        där eleven har erbjudits möjlighet att närvara.
+    _embedded:
+      type: object
+      properties:
+        activity:
+          $ref: "/schemas/Activity.yaml#/Activity"
+        student:
+          $ref: "/schemas/Person.yaml#/PersonFragment"
+  required:
+    - startDate
+    - endDate
+    - activity
+    - student
+    - attendanceSum
+
+
+
+AggregatedAttendances:
+  type: object
+  properties:
+      data:
+        type: array
+        items:
+          $ref: "#/AggregatedAttendance"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+  required:
+    - data

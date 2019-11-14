@@ -1,0 +1,96 @@
+schoolUnitOfferings:
+  get:
+    tags:
+      - Studieinformation
+    summary: Hämta en lista med skolenheters erbjudanden.
+    parameters:
+      - name: offeredAt
+        description: Begränsa urvalet till en viss skolenhet.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        in: query
+        schema:
+          type: string
+          enum:
+            - ModifiedDesc
+            - StartDateAsc
+            - StartDateDesc
+            - EndDateAsc
+            - EndDateDesc
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/SchoolUnitOffering.yaml#/SchoolUnitOfferings"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `offeredAt`).
+          Kan inte kombineras med `pageToken`.
+
+schoolUnitOfferingsLookup:
+  post:
+    tags:
+      - Studieinformation
+    summary: Hämta många program baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta program en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många program
+      på en gång genom att ange POST:a en lista med önskade program.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/SchoolUnitOffering.yaml#/SchoolUnitOfferingsArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+schoolUnitOfferingById:
+  get:
+    tags:
+      - Studieinformation
+    summary: Hämta en resurs baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för resursen som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/SchoolUnitOffering.yaml#/SchoolUnitOffering"
+      400:
+        description: Invalid id supplied
+      403:
+        description: Not authorised
+      404:
+        description: Duty not found

@@ -1,0 +1,109 @@
+duties:
+  get:
+    tags:
+      - Person
+    summary: Hämta en lista med tjänstgöringar.
+    parameters:
+      - name: dutySchoolUnit
+        description: >
+          Begränsa urvalet till de tjänstgöringar som är kopplade till en skolenhet.
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: dutyRole
+        description: Begränsta urvalet till de tjänstgöringar som matchar roll
+        in: query
+        schema:
+          $ref: "/schemas/common.yaml#/components/schemas/DutyRole"
+      - name: person
+        description: >
+          Begränsa urvalet till de tjänstgöringar som är kopplade till person ID
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        description: Anger hur resultatet ska sorteras.
+        in: query
+        schema:
+          type: string
+          enum:
+            - StartDateDesc
+            - StartDateAsc
+            - ModifiedDesc
+          default: ModifiedDesc
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Duty.yaml#/Duties"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`, `dutySchoolUnit`,
+          `dutyRole`, `person`). Kan inte kombineras med `pageToken`.
+
+dutiesLookup:
+  post:
+    tags:
+      - Person
+    summary: Hämta många tjänstgöringar baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta tjänstgöringar en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många tjänstgöringar
+      på en gång genom att ange POST:a en lista med önskade tjänstgöringar.
+    parameters:
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Duty.yaml#/DutiesArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+duty_by_id:
+  get:
+    tags:
+      - Person
+    summary: Hämta tjänstgöring baserat på tjänstgörings ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för tjänstgöringen som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/Duty.yaml#/Duty"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: Duty not found

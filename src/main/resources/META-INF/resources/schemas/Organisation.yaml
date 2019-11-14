@@ -1,0 +1,62 @@
+Organisation:
+  type: object
+  title: Organisation
+  properties:
+    id:
+      type: string
+      format: uuid
+    meta:
+      $ref: "/schemas/common.yaml#/Meta"
+    displayName:
+      type: string
+      description: Namn på organisationen
+    organisationType:
+      type: string
+      title: Code_OrganisationType
+      description: >
+        Typ av organisation
+      enum:
+        - Huvudman
+        - Stadsdel
+        - Rektorsområde
+        - Skola
+        - Övrigt
+    organisationNumber:
+      type: string
+      description: >
+        Identitetsbeteckning för juridiska personer såsom
+        kommun eller bolag
+    parentOrganisation:
+      allOf:
+        - $ref: "/schemas/common.yaml#/OrganisationReference"
+        - description: >
+            Identifierare för en eventellt överliggande organisation.
+  required:
+    - id
+    - meta
+    - displayName
+    - organisationType
+  description: En skolhuvudman eller annan slags organisatorisk enhet.
+
+OrganisationsArray:
+    type: array
+    items:
+      $ref: "#/Organisation"
+
+
+
+Organisations:
+ type: object
+ properties:
+      data:
+        type: array
+        items:
+          $ref: "#/Organisation"
+      pageToken:
+        type: string
+        nullable: true
+        description: >
+          Om värdet är null finns inget mer att hämta på det token
+          som skickades in som query parameter.
+ required:
+    - data

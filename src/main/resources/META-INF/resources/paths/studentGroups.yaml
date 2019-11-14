@@ -1,0 +1,152 @@
+studentGroups:
+  get:
+    tags:
+      - Grupper
+    summary: Hämta en lista med studentgrupper.
+    parameters:
+      - name: studentGroupType
+        description: >
+          Begränsa urvalet till grupper av en eller flera type.
+        in: query
+        schema:
+          type: array
+          items:
+            $ref: "/schemas/common.yaml#/components/schemas/StudentGroupTypesEnum"
+      - name: schoolTypes
+        description: >
+          Begränsa urvalet av studentgrupper till de som är har en av de angivna
+          skolformerna.
+        in: query
+        schema:
+          type: array
+          items:
+            $ref: "/schemas/common.yaml#/components/schemas/SchoolTypesEnum"
+      - name: owner
+        description: >
+          Begränsa urvalet av studentgrupper till de som vars ansvariga skolenhet
+          är en av de som anges av parametern.
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+            format: uuid
+      - name: startDate.onOrAfter
+        description: >
+          Begränsa urvalet av studentgrupper till de som är aktiva
+          inom ett intervall som startar på angivet datum
+          (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: endDate.onOrBefore
+        description: >
+          Begränsa urvalet av skolenheter till de som är aktiva
+          inom ett intervall som avslutas på angivet datum
+          (RFC 3339-format, t.ex. "2016-10-15"). Inkluderande.
+        in: query
+        schema:
+          type: string
+          format: date
+      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - name: sortkey
+        description: Anger hur resultatet ska sorteras.
+        in: query
+        schema:
+          type: string
+          enum:
+            - ModifiedDesc
+            - StartDateAsc
+            - StartDateDesc
+            - EndDateAsc
+            - EndDateDesc
+          default: ModifiedDesc
+
+      - $ref: "searchParameters.yaml#/Limit"
+      - $ref: "searchParameters.yaml#/PageToken"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/StudentGroup.yaml#/StudentGroups"
+      400:
+        description: >
+          Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
+          `meta.created.after`, `meta.created.before`, `expand`, `studentGroupType`,
+          `schoolTypes`, `owner`,`startDate.onOrAfter`, `endDate.onOrBefore`).
+          Kan inte kombineras med `pageToken`.
+
+studentGroupsLookup:
+  post:
+    tags:
+      - Grupper
+    summary: Hämta många studentgrupper baserat på en lista av ID:n.
+    description: >
+      Istället för att hämta studentgrupper en i taget med en loop
+      av GET-anrop så finns det även möjlighet att hämta många studentgrupper
+      på en gång genom att ange POST:a en lista med önskade studentgrupper.
+    parameters:
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/StudentGroup.yaml#/StudentGroupsArray"
+      503:
+        description: The response is too large for the server ie overload
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: "/schemas/common.yaml#/components/schemas/IdLookup"
+      required: true
+
+studentGroupsById:
+  get:
+    tags:
+      - Grupper
+    summary: Hämta studentgrupper baserat på ID
+    parameters:
+      - name: id
+        in: path
+        description: ID för studentgrupp som ska hämtas
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - $ref: "#/ExpandParameter"
+      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+    responses:
+      "200":
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "/schemas/StudentGroup.yaml#/StudentGroup"
+      "400":
+        description: Invalid id supplied
+      "403":
+        description: Not authorised
+      "404":
+        description: StudentGroup not found
+
+ExpandParameter:
+  name: expand
+  description: Beskriver om expanderade data ska hämtas
+  in: query
+  schema:
+    type: array
+    items:
+      type: string
+      enum: [assignmentRoles]
