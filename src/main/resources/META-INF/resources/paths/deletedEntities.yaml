@@ -19,8 +19,8 @@ deletedEntities:
           type: array
           items:
             $ref:  "/schemas/common.yaml#/components/schemas/EndPointsEnum"
-      - $ref: "searchParameters.yaml#/Limit"
-      - $ref: "searchParameters.yaml#/PageToken"
+      - $ref: "/paths/searchParameters.yaml#/Limit"
+      - $ref: "/paths/searchParameters.yaml#/PageToken"
     responses:
       200:
         description: successful operation

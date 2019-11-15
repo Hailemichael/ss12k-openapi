@@ -57,9 +57,9 @@ get:
         items:
           type: string
           enum: [ activity, student ]
-    - $ref: "searchParameters.yaml#/ExpandReferenceNames"
-    - $ref: "searchParameters.yaml#/Limit"
-    - $ref: "searchParameters.yaml#/PageToken"
+    - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
+    - $ref: "/paths/searchParameters.yaml#/Limit"
+    - $ref: "/paths/searchParameters.yaml#/PageToken"
 
   responses:
     200:

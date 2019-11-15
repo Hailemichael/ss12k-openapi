@@ -59,7 +59,7 @@ Attendance:
 AttendancesArray:
     type: array
     items:
-      $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+      $ref: "#/Attendance"
 
 Attendances:
   type: object
@@ -67,7 +67,7 @@ Attendances:
       data:
         type: array
         items:
-          $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+          $ref: "#/Attendance"
       pageToken:
         type: string
         nullable: true

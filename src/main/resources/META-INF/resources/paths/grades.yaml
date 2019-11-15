@@ -44,11 +44,11 @@ grades:
         schema:
           type: string
           format: date
-      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
-      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
-      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
-      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
       - name: sortkey
         description: Anger hur resultatet ska sorteras.
         in: query
@@ -60,8 +60,8 @@ grades:
             - ModifiedDesc
           default: ModifiedDesc
 
-      - $ref: "searchParameters.yaml#/Limit"
-      - $ref: "searchParameters.yaml#/PageToken"
+      - $ref: "/paths/searchParameters.yaml#/Limit"
+      - $ref: "/paths/searchParameters.yaml#/PageToken"
     responses:
       200:
         description: successful operation
@@ -86,7 +86,7 @@ gradesLookup:
       så finns det även möjlighet att hämta många betyg på en gång genom
       att ange POST:a en lista med önskade objekt.
     parameters:
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
     responses:
       200:
         description: successful operation
@@ -116,7 +116,7 @@ gradeById:
         schema:
           type: string
           format: uuid
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
     responses:
       "200":
         description: successful operation

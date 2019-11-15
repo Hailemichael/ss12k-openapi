@@ -49,12 +49,12 @@ studentGroups:
         schema:
           type: string
           format: date
-      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
-      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
-      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
-      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedAfter"
       - $ref: "#/ExpandParameter"
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
       - name: sortkey
         description: Anger hur resultatet ska sorteras.
         in: query
@@ -68,8 +68,8 @@ studentGroups:
             - EndDateDesc
           default: ModifiedDesc
 
-      - $ref: "searchParameters.yaml#/Limit"
-      - $ref: "searchParameters.yaml#/PageToken"
+      - $ref: "/paths/searchParameters.yaml#/Limit"
+      - $ref: "/paths/searchParameters.yaml#/PageToken"
     responses:
       200:
         description: successful operation
@@ -95,7 +95,7 @@ studentGroupsLookup:
       på en gång genom att ange POST:a en lista med önskade studentgrupper.
     parameters:
       - $ref: "#/ExpandParameter"
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
     responses:
       200:
         description: successful operation
@@ -126,7 +126,7 @@ studentGroupsById:
           type: string
           format: uuid
       - $ref: "#/ExpandParameter"
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
     responses:
       "200":
         description: successful operation

@@ -260,13 +260,13 @@ PersonExpanded:
               type: array
               description: Personens aktuella tjänstgöring
               items:
-                $ref: ".//schemas/Duty.yaml#/DutyFragment"
+                $ref: "/schemas/Duty.yaml#/DutyFragment"
             studentGroups:
               type: array
               description: >
                 En lista med studengrupper där eleven är medlem i
               items:
-                $ref: ".//schemas/StudentGroup.yaml#/StudentGroupFragment"
+                $ref: "/schemas/StudentGroup.yaml#/StudentGroupFragment"
 
 Persons:
   type: array

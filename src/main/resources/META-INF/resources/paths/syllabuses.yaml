@@ -4,11 +4,11 @@ syllabuses:
       - Studieinformation
     summary: Hämta en lista med syllabuses.
     parameters:
-      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
-      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
-      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
-      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
       - name: sortkey
         description: Anger hur resultatet ska sorteras.
         in: query
@@ -28,8 +28,8 @@ syllabuses:
             - SubjectDesignationDesc
           default: ModifiedDesc
 
-      - $ref: "searchParameters.yaml#/Limit"
-      - $ref: "searchParameters.yaml#/PageToken"
+      - $ref: "/paths/searchParameters.yaml#/Limit"
+      - $ref: "/paths/searchParameters.yaml#/PageToken"
     responses:
       200:
         description: successful operation
@@ -53,7 +53,7 @@ syllabusesLookup:
       av GET-anrop så finns det även möjlighet att hämta många syllabuses
       på en gång genom att ange POST:a en lista med önskade syllabuses.
     parameters:
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
     responses:
       200:
         description: successful operation
@@ -83,7 +83,7 @@ syllabusById:
         schema:
           type: string
           format: uuid
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
     responses:
       "200":
         description: successful operation

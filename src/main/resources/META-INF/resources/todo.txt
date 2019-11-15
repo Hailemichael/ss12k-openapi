@@ -216,7 +216,7 @@ resources.yaml [x]
 rooms.yaml [x]
 
 Stefan
-searchParameters.yaml
+/paths/searchParameters.yaml
 studentGroups.yaml
 studyPlans.yaml
 subscriptions.yaml

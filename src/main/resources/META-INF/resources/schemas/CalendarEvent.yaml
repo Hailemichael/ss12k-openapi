@@ -141,7 +141,7 @@ CalendarEvent:
         attendance:
           type: array
           items:
-            $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+            $ref: "/schemas/Attendance.yaml#/Attendance"
   required:
     - id
     - startTime

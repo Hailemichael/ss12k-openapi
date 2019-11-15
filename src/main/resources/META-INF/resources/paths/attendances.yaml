@@ -4,20 +4,20 @@ attendances:
       - Närvaro
     summary: Returnerar registrerad närvaro utifrån en aktivitet eller student.
     parameters:
-      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
-      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
-      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
-      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
-      - $ref: "searchParameters.yaml#/Limit"
-      - $ref: "searchParameters.yaml#/PageToken"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/Limit"
+      - $ref: "/paths/searchParameters.yaml#/PageToken"
     responses:
       200:
         description: successful operation
         content:
           application/json:
             schema:
-              $ref: "/schemas/AggregatedAttendance.yaml#/Attendances"
+              $ref: "/schemas/Attendance.yaml#/Attendances"
       400:
         description: >
           Filter (ex `sortkey`, `meta.modified.after`, `meta.modified.before`,
@@ -33,7 +33,7 @@ attendances:
       content:
         application/json:
           schema:
-            $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+            $ref: "/schemas/Attendance.yaml#/Attendance"
 
     responses:
       "200":
@@ -41,13 +41,13 @@ attendances:
         content:
           application/json:
             schema:
-              $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+              $ref: "/schemas/Attendance.yaml#/Attendance"
       default:
         description: unexpected error
         content:
           application/json:
             schema:
-              $ref: "/schemas/AggregatedAttendance.yaml#/Error"
+              $ref: "/schemas/Attendance.yaml#/Error"
 
 attendancesLookup:
   post:
@@ -61,14 +61,14 @@ attendancesLookup:
       av GET-anrop så finns det även möjlighet att hämta många aktiviteter
       på en gång genom att ange POST:a en lista med önskade aktiviteter.
     parameters:
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
     responses:
       200:
         description: successful operation
         content:
           application/json:
             schema:
-              $ref: "/schemas/AggregatedAttendance.yaml#/AttendancesArray"
+              $ref: "/schemas/Attendance.yaml#/AttendancesArray"
       503:
         description: The response is too large for the server ie overload
     requestBody:
@@ -113,7 +113,7 @@ attendanceById:
         content:
           application/json:
             schema:
-              $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+              $ref: "/schemas/Attendance.yaml#/Attendance"
       "204":
         description: Posten borttagen.
       "400":
@@ -127,7 +127,7 @@ attendanceById:
         content:
           application/json:
             schema:
-              $ref: "/schemas/AggregatedAttendance.yaml#/Error"
+              $ref: "/schemas/Attendance.yaml#/Error"
   delete:
     tags:
       - Närvaro

@@ -38,12 +38,12 @@ calendarEvents:
             type: string
             format: uuid
 
-      - $ref: "searchParameters.yaml#/SearchCreatedBefore"
-      - $ref: "searchParameters.yaml#/SearchCreatedAfter"
-      - $ref: "searchParameters.yaml#/SearchModifiedBefore"
-      - $ref: "searchParameters.yaml#/SearchModifiedAfter"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchCreatedAfter"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedBefore"
+      - $ref: "/paths/searchParameters.yaml#/SearchModifiedAfter"
       - $ref: "#/ExpandParameter"
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
       - name: sortkey
         description: Anger hur resultatet ska sorteras.
         in: query
@@ -54,8 +54,8 @@ calendarEvents:
             - StartTimeAsc
             - StartTimeDesc
           default: ModifiedDesc
-      - $ref: "searchParameters.yaml#/Limit"
-      - $ref: "searchParameters.yaml#/PageToken"
+      - $ref: "/paths/searchParameters.yaml#/Limit"
+      - $ref: "/paths/searchParameters.yaml#/PageToken"
     responses:
       200:
         description: successful operation
@@ -83,7 +83,7 @@ calendarEventById:
           type: string
           format: uuid
       - $ref: "#/ExpandParameter"
-      - $ref: "searchParameters.yaml#/ExpandReferenceNames"
+      - $ref: "/paths/searchParameters.yaml#/ExpandReferenceNames"
     responses:
       "200":
         description: successful operation

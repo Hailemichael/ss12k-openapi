@@ -190,7 +190,7 @@ components:
     CalendarEvent:
       $ref: "/schemas/CalendarEvent.yaml#/CalendarEvent"
     Attendance:
-      $ref: "/schemas/AggregatedAttendance.yaml#/Attendance"
+      $ref: "/schemas/Attendance.yaml#/Attendance"
     AttendanceEvent:
       $ref: "/schemas/AttendanceEvent.yaml#/AttendanceEvent"
     AttendanceSchedule:
