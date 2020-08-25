@@ -9,3 +9,5 @@ mvn clean package
 mvn spring-boot:run
 ```
 then browse http://localhost:8080/swagger-ui.html
+
+cool!
