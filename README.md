@@ -2,7 +2,7 @@
 
 This project just shows how ss12000 v2 OpenApi spec looks like in swagger ui.
 
-## Run
+### Run
 
 ```
 mvn clean package
